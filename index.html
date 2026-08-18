@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Live demo of a privacy-friendly website accessibility toolbar.">
+  <title>Accessibility Toolbar Demo</title>
+  <style>
+    :root{--navy:#0d2745;--blue:#155eef;--cyan:#35c4d8;--ink:#172033;--muted:#5d697b;--paper:#f5f8fc}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;color:var(--ink);font-family:Inter,Arial,sans-serif;background:var(--paper);line-height:1.6}
+    a{color:#0b51bd}
+    .skip{position:absolute;left:12px;top:-100px;background:#fff;color:#111;padding:12px 16px;z-index:10}
+    .skip:focus{top:12px}
+    header{color:#fff;background:radial-gradient(circle at 85% 10%,rgba(53,196,216,.45),transparent 30%),linear-gradient(135deg,#0d2745,#154f81);padding:20px clamp(20px,6vw,84px) 82px}
+    nav{align-items:center;display:flex;justify-content:space-between;margin:auto;max-width:1180px}
+    .logo{align-items:center;display:flex;font-size:17px;font-weight:800;gap:10px}.logo span{align-items:center;background:#fff;border-radius:50%;color:var(--blue);display:flex;font-size:22px;height:42px;justify-content:center;width:42px}
+    nav a{color:#fff;font-size:14px;font-weight:700;text-decoration:none}
+    .hero{display:grid;gap:42px;grid-template-columns:1.2fr .8fr;margin:76px auto 0;max-width:1180px}
+    .pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);border-radius:999px;display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;padding:7px 12px}
+    h1{font-size:clamp(42px,6vw,74px);letter-spacing:-.045em;line-height:1.02;margin:18px 0 20px;max-width:780px}
+    .hero p{color:#d9e9f6;font-size:18px;max-width:680px}
+    .hero-card{align-self:end;background:#fff;border-radius:22px;box-shadow:0 22px 60px rgba(0,0,0,.24);color:var(--ink);padding:25px;transform:rotate(1.5deg)}
+    .hero-card strong{display:block;font-size:19px;margin-bottom:7px}.hero-card p{color:var(--muted);font-size:14px;margin:0}
+    main{margin:auto;max-width:1180px;padding:70px clamp(20px,6vw,84px)}
+    h2{font-size:clamp(29px,4vw,42px);letter-spacing:-.025em;line-height:1.15;margin:0 0 14px}
+    .lede{color:var(--muted);font-size:17px;max-width:720px}
+    .features{display:grid;gap:16px;grid-template-columns:repeat(3,1fr);margin:34px 0 68px}
+    .feature{background:#fff;border:1px solid #dce4ef;border-radius:15px;padding:22px}.feature b{display:block;font-size:17px;margin:9px 0}.feature p{color:var(--muted);font-size:14px;margin:0}.feature-icon{font-size:25px}
+    .install{background:var(--navy);border-radius:22px;color:#fff;display:grid;gap:30px;grid-template-columns:.85fr 1.15fr;padding:clamp(25px,5vw,48px)}
+    .install p{color:#c7d9e9}.code-wrap{align-self:center;text-align:center}.code{background:#061728;border:1px solid #31506c;border-radius:12px;color:#c9f6ff;display:block;font-family:Consolas,monospace;font-size:13px;overflow:auto;padding:20px;text-align:left;white-space:nowrap}
+    .copy{background:var(--cyan);border:0;border-radius:10px;color:#092337;cursor:pointer;font-weight:800;margin-top:12px;padding:12px 18px;width:100%}
+    .secret-key,.secret-lock{align-items:center;background:linear-gradient(135deg,#35c4d8,#155eef);border:3px solid #fff;border-radius:50%;box-shadow:0 12px 30px rgba(0,0,0,.28);color:#fff;cursor:pointer;display:inline-flex;height:78px;justify-content:center;font-size:38px;width:78px}
+    .secret-key:hover,.secret-lock:hover{filter:brightness(1.08);transform:translateY(-2px)}
+    .private-label{color:#d8e7f4!important;font-size:13px!important;margin:10px 0 0!important}
+    .access-modal{align-items:center;background:rgba(5,19,35,.78);display:flex;inset:0;justify-content:center;padding:20px;position:fixed;z-index:2147483646}
+    .access-modal[hidden]{display:none}
+    .access-card{background:#fff;border:3px solid var(--cyan);border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.4);max-width:520px;padding:28px;position:relative;text-align:center;width:100%}
+    .access-card h2{color:var(--navy);font-size:26px;margin:0 40px 8px}.access-card p{color:var(--muted);margin:0 0 20px}
+    .modal-close{background:#edf2f7;border:0;border-radius:8px;color:var(--navy);cursor:pointer;font-size:25px;height:38px;line-height:1;position:absolute;right:14px;top:14px;width:38px}
+    .unlock-panel{border-top:1px solid #dce4ef;margin-top:22px;padding-top:22px}.unlock-panel[hidden]{display:none}
+    .access-status{color:#175b42!important;font-size:14px;font-weight:800}
+    .note{background:#fff7db;border:1px solid #efcf67;border-radius:14px;color:#463b17;margin-top:30px;padding:18px 20px}.note strong{display:block}
+    footer{color:#647084;font-size:13px;padding:34px;text-align:center}
+    @media(max-width:800px){.hero,.install{grid-template-columns:1fr}.hero{margin-top:52px}.features{grid-template-columns:1fr}.hero-card{transform:none}}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to main content</a>
+  <header>
+    <nav aria-label="Primary"><div class="logo"><span aria-hidden="true">♿</span> Access Made Easier</div><a href="#install">Installation</a></nav>
+    <div class="hero">
+      <div>
+        <span class="pill">ONE-LINE WEBSITE WIDGET</span>
+        <h1>Comfort controls for every visitor.</h1>
+        <p>A lightweight, privacy-friendly toolbar that lets visitors personalize text, contrast, motion, focus, links, and more.</p>
+      </div>
+      <div class="hero-card"><strong>Try the blue wheelchair button</strong><p>It is fixed at the bottom-right of this page. Open it with a mouse, touch, or keyboard and test every setting live.</p></div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section aria-labelledby="features-heading">
+      <h2 id="features-heading">Useful controls. No visitor tracking.</h2>
+      <p class="lede">The toolbar keeps each visitor’s preferences in their own browser and uses an isolated design that is less likely to conflict with the website underneath.</p>
+      <div class="features">
+        <article class="feature"><span class="feature-icon" aria-hidden="true">Aa</span><b>Reading comfort</b><p>Text scaling, readable font, generous line height, text spacing, and highlighted links.</p></article>
+        <article class="feature"><span class="feature-icon" aria-hidden="true">◐</span><b>Visual preferences</b><p>High contrast, grayscale, visible keyboard focus, larger cursor, and optional hidden media.</p></article>
+        <article class="feature"><span class="feature-icon" aria-hidden="true">Ⅱ</span><b>Motion control</b><p>Visitors can minimize animations and transitions, with browser reduced-motion preferences respected.</p></article>
+      </div>
+    </section>
+
+    <section class="install" id="install" aria-labelledby="install-heading">
+      <div><h2 id="install-heading">Paste once. Done.</h2><p>The private embed code is protected behind your two-stage access sequence.</p></div>
+      <div class="code-wrap"><button class="secret-key" id="secret-key" type="button" aria-label="Developer access key"><span aria-hidden="true">🔑</span></button><p class="private-label">Private developer access</p></div>
+    </section>
+
+    <aside class="note"><strong>Important compliance note</strong>This toolbar provides optional visitor controls. It does not scan, repair, certify, or guarantee that a website complies with the ADA, WCAG, Section 508, or every state law. The website itself still needs accessible design, content, forms, navigation, testing, and remediation.</aside>
+  </main>
+  <footer>Accessibility Toolbar Demo · Preferences remain on the visitor’s device</footer>
+
+  <div class="access-modal" id="access-modal" role="dialog" aria-modal="true" aria-labelledby="access-title" hidden>
+    <div class="access-card">
+      <button class="modal-close" id="modal-close" type="button" aria-label="Close private access">×</button>
+      <h2 id="access-title">Private embed access</h2>
+      <p id="lock-instruction">Complete the second step to reveal the one-line widget code.</p>
+      <button class="secret-lock" id="secret-lock" type="button" aria-label="Private access lock"><span aria-hidden="true">🔒</span></button>
+      <div class="unlock-panel" id="unlock-panel" hidden>
+        <p class="access-status" role="status">Access unlocked</p>
+        <code class="code" id="embed-code">&lt;script src="https://taniad2169.github.io/access-link/widget.js"&gt;&lt;/script&gt;</code>
+        <button class="copy" id="copy" type="button">Copy and share widget code</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./widget.js" data-color="#155eef" data-position="right" data-brand="Accessibility tools"></script>
+  <script>
+    const keyButton=document.getElementById('secret-key');
+    const accessModal=document.getElementById('access-modal');
+    const lockButton=document.getElementById('secret-lock');
+    const unlockPanel=document.getElementById('unlock-panel');
+    const modalClose=document.getElementById('modal-close');
+    let keyClicks=0,lockClicks=0,keyTimer=null,lockTimer=null;
+
+    keyButton.addEventListener('click',function(){
+      keyClicks++;
+      clearTimeout(keyTimer);
+      keyTimer=setTimeout(()=>keyClicks=0,6000);
+      if(keyClicks===7){
+        keyClicks=0;
+        accessModal.hidden=false;
+        unlockPanel.hidden=true;
+        lockButton.hidden=false;
+        lockClicks=0;
+        lockButton.focus();
+      }
+    });
+
+    lockButton.addEventListener('click',function(){
+      lockClicks++;
+      clearTimeout(lockTimer);
+      lockTimer=setTimeout(()=>lockClicks=0,6000);
+      if(lockClicks===3){
+        lockClicks=0;
+        lockButton.hidden=true;
+        unlockPanel.hidden=false;
+        document.getElementById('copy').focus();
+      }
+    });
+
+    function closeAccess(){
+      accessModal.hidden=true;
+      unlockPanel.hidden=true;
+      lockButton.hidden=false;
+      keyClicks=0;
+      lockClicks=0;
+      keyButton.focus();
+    }
+    modalClose.addEventListener('click',closeAccess);
+    accessModal.addEventListener('click',event=>{if(event.target===accessModal)closeAccess()});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!accessModal.hidden)closeAccess()});
+
+    document.getElementById('copy').addEventListener('click',async function(){
+      const value=document.getElementById('embed-code').textContent;
+      try{await navigator.clipboard.writeText(value);this.textContent='Copied and ready to share!';setTimeout(()=>this.textContent='Copy and share widget code',1800)}catch(error){window.prompt('Copy this code:',value)}
+    });
+  </script>
+</body>
+</html>

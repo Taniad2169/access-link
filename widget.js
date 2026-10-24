@@ -428,12 +428,13 @@
     var key = "AIzaSyAqhqUzWqpS7YunkODJU_udTBG3pjsJegQ";
     var cacheKey = "ws-lic-" + id, today = new Date().toISOString().slice(0, 10), cache = {};
     try { cache = JSON.parse(localStorage.getItem(cacheKey) || "{}"); } catch (e) { cache = {}; }
-    if ((cache.status === "blocked" || cache.status === "paused") && cache.day === today) { onBlocked(cache.status); return; }
+    var offFromCache = (cache.status === "blocked" || cache.status === "paused") && cache.day === today;
+    if (offFromCache) onBlocked(cache.status);
     if (!window.fetch) return;
     fetch(base + ":batchGet?key=" + key, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ documents: ["projects/webswan-marketing/databases/(default)/documents/widget_licenses/" + id] }) }).then(function (r) { return r.ok ? r.json() : null; }).then(function (res) {
       var doc = res && res[0] && res[0].found;
       var status = doc && doc.fields && doc.fields.status && doc.fields.status.stringValue || "";
-      if (status === "blocked" || status === "paused") onBlocked(status);
+      if ((status === "blocked" || status === "paused") && !offFromCache) onBlocked(status);
       if (cache.day !== today || cache.status !== status) report();
       try { localStorage.setItem(cacheKey, JSON.stringify({ day: today, status: status })); } catch (e) { /* ignore */ }
     }).catch(function () { /* offline or blocked: never break the site */ });

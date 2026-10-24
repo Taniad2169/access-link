@@ -266,14 +266,14 @@
     }).join("");
     return '<style>' + css() + '</style>' +
       '<section id="banner" class="banner" role="region" aria-label="Cookie consent" hidden>' +
-        '<div class="banner-text"><p class="eyebrow">YOUR PRIVACY</p><p><strong>' + escapeHtml(options.company) + ' uses cookies.</strong> We use cookies and similar technologies to run this site, understand traffic and, with your permission, for advertising. You can accept, reject, or choose what to share. ' +
+        '<div class="banner-text"><p class="eyebrow">YOUR PRIVACY</p><p><strong><span class="cookie" aria-hidden="true">\ud83c\udf6a</span> ' + escapeHtml(options.company) + ' uses cookies.</strong> We use cookies and similar technologies to run this site, understand traffic and, with your permission, for advertising. You can accept, reject, or choose what to share. ' +
         (safeUrl(options.privacyUrl) ? '<a href="' + escapeHtml(options.privacyUrl) + '" target="_blank" rel="noopener">Privacy policy</a>' : '') + '</p>' + gpcNote + '</div>' +
         '<div class="actions"><button id="accept-all" class="btn primary" type="button">Accept all</button><button id="reject-all" class="btn" type="button">Reject all</button>' +
         '<button id="customize" class="btn" type="button">Choose what to share</button><button id="dns-open" class="link" type="button">Do Not Sell or Share My Personal Information</button></div>' +
       '</section>' +
       '<button id="reopen" class="reopen" type="button" aria-label="Privacy and cookie settings" hidden><span aria-hidden="true">\ud83c\udf6a</span></button>' +
       '<div id="overlay" class="overlay" hidden><section id="panel" class="panel" role="dialog" aria-modal="true" aria-labelledby="p-title">' +
-        '<header class="header"><div><p class="eyebrow">PRIVACY CENTER</p><h2 id="p-title">Your privacy choices</h2></div><button id="close" class="icon" type="button" aria-label="Close privacy choices">\u00d7</button></header>' +
+        '<header class="header"><div><p class="eyebrow">PRIVACY CENTER</p><h2 id="p-title"><span aria-hidden="true">\ud83c\udf6a</span> Your privacy choices</h2></div><button id="close" class="icon" type="button" aria-label="Close privacy choices">\u00d7</button></header>' +
         '<div class="content">' +
           '<div id="dns-note" class="dns" hidden><strong>Do Not Sell or Share My Personal Information</strong><p>Depending on where you live (for example California, Colorado, Connecticut, Virginia, Texas, Oregon and other states), you have the right to opt out of the sale or sharing of your personal information and of targeted advertising. We have turned off <b>Marketing</b> and <b>Sale or sharing</b> below. Press <b>Save and close</b> to confirm.</p></div>' +
           '<p class="intro">Choose which information you allow this website to collect and share. Your choices are saved on this browser and device only. If you clear your cookies or use a different browser or device, you will be asked again. You can change your mind at any time with the cookie button.</p>' +
@@ -330,6 +330,9 @@
       ".links{display:flex;flex-wrap:wrap;font-size:12px;gap:6px 16px;padding-top:12px}",
       ".footer{border-top:1px solid #e6eaf0;display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;padding:14px 20px}",
       ".brand{color:#8a94a6;font-size:10px;margin:0;padding:0 20px 10px;text-align:right}.brand a{color:#8a94a6;font-weight:600}",
+      ".cookie{display:inline-block;font-size:1.25em;margin-right:2px;transform-origin:50% 60%;vertical-align:-2px}",
+      "@media(prefers-reduced-motion:no-preference){.cookie{animation:wsc-wiggle 1.4s ease-in-out .6s 2}}",
+      "@keyframes wsc-wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-14deg)}40%{transform:rotate(12deg)}60%{transform:rotate(-8deg)}80%{transform:rotate(4deg)}}",
       ".sr-only{clip:rect(0,0,0,0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}",
       "@media(max-width:600px){.banner{padding:14px}.actions{justify-content:stretch}.actions .btn{flex:1 1 45%}.link{text-align:center}.footer .btn{flex:1 1 100%}}"
     ].join("\n");

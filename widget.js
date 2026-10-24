@@ -93,7 +93,9 @@
       "html[data-ta11y-focus='true'] body :focus-visible:not(#" + HOST_ID + "){outline:4px solid #ffbf47!important;outline-offset:4px!important;box-shadow:0 0 0 2px #111!important}",
       "html[data-ta11y-media='true'] body :where(img,picture,video,canvas,iframe,svg):not(#" + HOST_ID + "){visibility:hidden!important}",
       "html[data-ta11y-readable='true'] #" + HOST_ID + ",html[data-ta11y-line-height='true'] #" + HOST_ID + ",html[data-ta11y-letter-spacing='true'] #" + HOST_ID + "{font:initial!important;letter-spacing:normal!important;line-height:normal!important}",
-      "@media (prefers-reduced-motion:reduce){#" + HOST_ID + "{scroll-behavior:auto!important}}"
+      "@media (prefers-reduced-motion:reduce){#" + HOST_ID + "{scroll-behavior:auto!important}}",
+      "html[data-wsc-banner='open'] #" + HOST_ID + "{bottom:calc(var(--wsc-banner-h,0px) + 28px)!important}",
+      "html[data-wsc-modal='open'] #" + HOST_ID + "{visibility:hidden!important}"
     ].join("\n");
     document.head.appendChild(style);
   }
@@ -194,24 +196,24 @@
     }
 
     return '<style>' + getWidgetCss() + '</style>' +
-      '<button id="launcher" class="launcher" type="button" aria-label="Open accessibility tools" aria-haspopup="dialog" aria-expanded="false" aria-controls="panel"><span aria-hidden="true">♿</span></button>' +
+      '<button id="launcher" class="launcher" type="button" aria-label="Open accessibility tools" aria-haspopup="dialog" aria-expanded="false" aria-controls="panel"><span aria-hidden="true">\u267f</span></button>' +
       '<section id="panel" class="panel" role="dialog" aria-modal="true" aria-labelledby="title" hidden>' +
-        '<header class="header"><div><p class="eyebrow">PERSONALIZE THIS SITE</p><h2 id="title">' + escapeHtml(options.brand) + '</h2></div><button id="close" class="icon-button" type="button" aria-label="Close accessibility tools">×</button></header>' +
+        '<header class="header"><div><p class="eyebrow">PERSONALIZE THIS SITE</p><h2 id="title">' + escapeHtml(options.brand) + '</h2></div><button id="close" class="icon-button" type="button" aria-label="Close accessibility tools">\u00d7</button></header>' +
         '<div class="content">' +
-          '<button id="skip-main" class="skip-button" type="button">Skip to main content <span aria-hidden="true">→</span></button>' +
-          '<div class="profiles" aria-label="Quick profiles"><button type="button" data-profile="vision"><span aria-hidden="true">◉</span> Vision</button><button type="button" data-profile="reading"><span aria-hidden="true">Aa</span> Reading</button><button type="button" data-profile="motion"><span aria-hidden="true">◫</span> Low motion</button></div>' +
-          '<div class="text-size"><span><strong>Text size</strong><small id="text-value">100%</small></span><span class="stepper"><button id="text-decrease" type="button" aria-label="Decrease text size">−</button><button id="text-increase" type="button" aria-label="Increase text size">+</button></span></div>' +
+          '<button id="skip-main" class="skip-button" type="button">Skip to main content <span aria-hidden="true">\u2192</span></button>' +
+          '<div class="profiles" aria-label="Quick profiles"><button type="button" data-profile="vision"><span aria-hidden="true">\u25c9</span> Vision</button><button type="button" data-profile="reading"><span aria-hidden="true">Aa</span> Reading</button><button type="button" data-profile="motion"><span aria-hidden="true">\u25eb</span> Low motion</button></div>' +
+          '<div class="text-size"><span><strong>Text size</strong><small id="text-value">100%</small></span><span class="stepper"><button id="text-decrease" type="button" aria-label="Decrease text size">\u2212</button><button id="text-increase" type="button" aria-label="Increase text size">+</button></span></div>' +
           '<div class="settings" aria-label="Display and reading settings">' +
             settingButton("readableFont", "Aa", "Readable font") +
-            settingButton("lineHeight", "↕", "Line height") +
-            settingButton("letterSpacing", "↔", "Text spacing") +
-            settingButton("highlightLinks", "⌁", "Highlight links") +
-            settingButton("highContrast", "◐", "High contrast") +
-            settingButton("grayscale", "●", "Grayscale") +
-            settingButton("pauseMotion", "Ⅱ", "Pause motion") +
-            settingButton("largeCursor", "➤", "Large cursor") +
-            settingButton("focusOutline", "▣", "Focus highlight") +
-            settingButton("hideMedia", "▧", "Hide media") +
+            settingButton("lineHeight", "\u2195", "Line height") +
+            settingButton("letterSpacing", "\u2194", "Text spacing") +
+            settingButton("highlightLinks", "\u2301", "Highlight links") +
+            settingButton("highContrast", "\u25d0", "High contrast") +
+            settingButton("grayscale", "\u25cf", "Grayscale") +
+            settingButton("pauseMotion", "\u2161", "Pause motion") +
+            settingButton("largeCursor", "\u27a4", "Large cursor") +
+            settingButton("focusOutline", "\u25a3", "Focus highlight") +
+            settingButton("hideMedia", "\u25a7", "Hide media") +
           '</div>' +
           '<button id="reset" class="reset" type="button">Reset all settings</button>' +
           (supportLinks ? '<div class="support">' + supportLinks + '</div>' : '') +
@@ -222,7 +224,7 @@
   }
 
   function settingButton(key, icon, label) {
-    return '<button class="setting" type="button" data-setting="' + key + '" aria-pressed="false"><span class="setting-icon" aria-hidden="true">' + icon + '</span><span>' + label + '</span><span class="check" aria-hidden="true">✓</span></button>';
+    return '<button class="setting" type="button" data-setting="' + key + '" aria-pressed="false"><span class="setting-icon" aria-hidden="true">' + icon + '</span><span>' + label + '</span><span class="check" aria-hidden="true">\u2713</span></button>';
   }
 
   function getWidgetCss() {
@@ -393,9 +395,57 @@
     });
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start, { once: true });
-  } else {
+  /* ---------- WebSwan license check and install report ---------- */
+  // Sends only this website's address and page path (never anything about the visitor), at most once a day per browser.
+  function licenseCheck(product, onBlocked) {
+    var hostName = String(location.hostname || "").toLowerCase().replace(/^www\./, "");
+    if (!hostName || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(hostName) || location.protocol === "file:") return;
+    var id = product + "__" + hostName.replace(/[^a-z0-9.-]/g, "_");
+    var base = "https://firestore.googleapis.com/v1/projects/webswan-marketing/databases/(default)/documents";
+    var key = "AIzaSyAqhqUzWqpS7YunkODJU_udTBG3pjsJegQ";
+    var cacheKey = "ws-lic-" + id, today = new Date().toISOString().slice(0, 10), cache = {};
+    try { cache = JSON.parse(localStorage.getItem(cacheKey) || "{}"); } catch (e) { cache = {}; }
+    if (cache.status === "blocked" && cache.day === today) { onBlocked(); return; }
+    if (!window.fetch) return;
+    fetch(base + ":batchGet?key=" + key, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ documents: ["projects/webswan-marketing/databases/(default)/documents/widget_licenses/" + id] }) }).then(function (r) { return r.ok ? r.json() : null; }).then(function (res) {
+      var doc = res && res[0] && res[0].found;
+      var status = doc && doc.fields && doc.fields.status && doc.fields.status.stringValue || "";
+      if (status === "blocked") onBlocked();
+      if (cache.day !== today || cache.status !== status) report();
+      try { localStorage.setItem(cacheKey, JSON.stringify({ day: today, status: status })); } catch (e) { /* ignore */ }
+    }).catch(function () { /* offline or blocked: never break the site */ });
+
+    function report() {
+      var name = "projects/webswan-marketing/databases/(default)/documents/widget_installs/" + id;
+      var page = String(location.pathname || "/").slice(0, 300);
+      var transforms = [{ fieldPath: "lastSeen", setToServerValue: "REQUEST_TIME" }, { fieldPath: "hits", increment: { integerValue: "1" } }];
+      function commit(write) {
+        return fetch(base + ":commit?key=" + key, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ writes: [write] }), keepalive: true });
+      }
+      commit({
+        update: { name: name, fields: { product: { stringValue: product }, host: { stringValue: hostName }, page: { stringValue: page } } },
+        updateTransforms: transforms.concat([{ fieldPath: "firstSeen", setToServerValue: "REQUEST_TIME" }]),
+        currentDocument: { exists: false }
+      }).then(function (r) {
+        if (r.ok) return;
+        return commit({ update: { name: name, fields: { page: { stringValue: page } } }, updateMask: { fieldPaths: ["page"] }, updateTransforms: transforms, currentDocument: { exists: true } });
+      }).catch(function () { /* ignore */ });
+    }
+  }
+
+  function boot() {
     start();
+    licenseCheck("ada", function () {
+      var el = document.getElementById(HOST_ID);
+      if (el) el.parentNode.removeChild(el);
+      var st = document.getElementById(STYLE_ID);
+      if (st) st.parentNode.removeChild(st);
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
   }
 })();

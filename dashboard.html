@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Widget Installs · WebSwan</title>
+  <style>
+    :root{--navy:#0d2745;--blue:#339cde;--sky:#93e5fa;--ink:#172033;--muted:#5d697b;--paper:#f5f8fc;--line:#dce4ef}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,Arial,sans-serif;line-height:1.5}
+    header{background:linear-gradient(135deg,#0d2745,#1d6fa8);color:#fff;padding:22px clamp(16px,5vw,48px)}
+    header h1{font-size:24px;margin:0}header p{color:#d6ebfa;margin:4px 0 0;font-size:14px}
+    main{max-width:1100px;margin:0 auto;padding:24px clamp(16px,4vw,32px) 60px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+    .btn{background:#fff;border:2px solid #9fb0c8;border-radius:9px;color:var(--ink);cursor:pointer;font:inherit;font-size:13px;font-weight:800;padding:7px 12px}
+    .btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
+    .btn.green{border-color:#2f8f57;color:#1f6b40}.btn.red{border-color:#c0392b;color:#a12a1f}
+    .stats{display:grid;gap:12px;grid-template-columns:repeat(4,1fr);margin:0 0 18px}
+    .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px}.stat b{display:block;font-size:26px}.stat span{color:var(--muted);font-size:12px;font-weight:700}
+    .stat.warn b{color:#c46a00}
+    .toolbar{align-items:center;display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+    .toolbar input,.toolbar select{border:1px solid #b8c4d6;border-radius:9px;font:inherit;padding:8px 10px}
+    .toolbar input{flex:1 1 220px}
+    table{border-collapse:collapse;width:100%;font-size:14px}
+    th{color:var(--muted);font-size:11px;letter-spacing:.08em;text-align:left;text-transform:uppercase;padding:8px}
+    td{border-top:1px solid var(--line);padding:10px 8px;vertical-align:middle}
+    td a{color:#0b5c94;font-weight:700}
+    .tag{border-radius:999px;display:inline-block;font-size:11px;font-weight:800;padding:3px 9px;white-space:nowrap}
+    .tag.approved{background:#e3f5ea;color:#1f6b40}.tag.blocked{background:#fde6e3;color:#a12a1f}.tag.unknown{background:#fff1d6;color:#8a4b00}
+    .tag.cookie{background:#e6f4fc;color:#145c87}.tag.ada{background:#ece9ff;color:#4a3aa8}
+    .new{background:#c0392b;border-radius:6px;color:#fff;font-size:10px;font-weight:800;margin-left:6px;padding:1px 6px}
+    .muted{color:var(--muted);font-size:12px}
+    .actions{display:flex;flex-wrap:wrap;gap:6px}
+    #msg{margin:0 0 14px}
+    .center{text-align:center;padding:40px 18px}
+    @media(max-width:760px){.stats{grid-template-columns:1fr 1fr}thead{display:none}tr{display:block;border-top:1px solid var(--line);padding:8px 0}td{border:0;display:block;padding:4px 8px}}
+  </style>
+</head>
+<body>
+  <header><h1>🦢 Widget installs</h1><p>Every website running your ADA toolbar or cookie banner. Approve your clients and block anyone using it without permission.</p></header>
+  <main>
+    <div id="signin" class="card center">
+      <p><b>Owner sign-in</b></p>
+      <p class="muted">Only thewebswann@gmail.com can open this dashboard.</p>
+      <button class="btn blue" id="login">Sign in with Google</button>
+      <p class="muted" id="login-err"></p>
+    </div>
+    <div id="app" hidden>
+      <p id="msg" class="muted"></p>
+      <div class="stats">
+        <div class="stat"><b id="s-total">0</b><span>Websites</span></div>
+        <div class="stat warn"><b id="s-unknown">0</b><span>Not approved yet</span></div>
+        <div class="stat"><b id="s-approved">0</b><span>Approved clients</span></div>
+        <div class="stat"><b id="s-blocked">0</b><span>Blocked</span></div>
+      </div>
+      <div class="card">
+        <div class="toolbar">
+          <input id="q" type="search" placeholder="Search a website…" aria-label="Search websites">
+          <select id="f" aria-label="Filter"><option value="">All</option><option value="unknown">Not approved yet</option><option value="approved">Approved</option><option value="blocked">Blocked</option><option value="cookie">Cookie banner</option><option value="ada">ADA toolbar</option></select>
+          <button class="btn" id="notify">🔔 Alert me in this tab</button>
+          <button class="btn" id="logout">Sign out</button>
+        </div>
+        <table><thead><tr><th>Website</th><th>Widget</th><th>Status</th><th>First seen</th><th>Last seen</th><th>Visits</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table>
+        <p id="empty" class="center muted" hidden>No installs reported yet. As soon as a website loads one of your widgets it shows up here.</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script>
+    const OWNER = 'thewebswann@gmail.com';
+    firebase.initializeApp({
+      apiKey: "AIzaSyAqhqUzWqpS7YunkODJU_udTBG3pjsJegQ",
+      authDomain: "webswan-marketing.firebaseapp.com",
+      projectId: "webswan-marketing",
+      storageBucket: "webswan-marketing.firebasestorage.app",
+      messagingSenderId: "556357112107",
+      appId: "1:556357112107:web:6c8bd74e3a7caf9a2d756e"
+    });
+    const auth = firebase.auth(), db = firebase.firestore();
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const fmt = ts => ts && ts.toDate ? ts.toDate().toLocaleString([], {month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit'}) : '—';
+    let installs = [], licenses = {}, unsub = [], known = null, alerts = false;
+    let lastVisit = 0; try { lastVisit = +localStorage.getItem('ws-dash-last') || 0; } catch (e) {}
+
+    $('login').onclick = async () => {
+      $('login-err').textContent = '';
+      try { await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); }
+      catch (e) { $('login-err').textContent = e.code === 'auth/unauthorized-domain' ? 'This page address must be added in Firebase → Authentication → Settings → Authorized domains (taniad2169.github.io).' : e.message; }
+    };
+    $('logout').onclick = () => auth.signOut();
+
+    auth.onAuthStateChanged(user => {
+      unsub.forEach(u => u()); unsub = [];
+      const ok = user && user.email === OWNER;
+      $('signin').hidden = ok; $('app').hidden = !ok;
+      if (user && !ok) { $('login-err').textContent = 'Signed in as ' + user.email + '. This dashboard is only for the owner.'; auth.signOut(); }
+      if (!ok) return;
+      unsub.push(db.collection('widget_installs').onSnapshot(snap => {
+        installs = []; snap.forEach(d => installs.push(Object.assign({ id: d.id }, d.data())));
+        if (known && alerts) installs.filter(i => !known.has(i.id)).forEach(i => {
+          try { new Notification('New website using your ' + (i.product === 'ada' ? 'ADA toolbar' : 'cookie banner'), { body: i.host }); } catch (e) {}
+        });
+        known = new Set(installs.map(i => i.id));
+        draw();
+      }, e => { $('msg').textContent = 'Could not load installs: ' + e.message + ' (are the Firestore rules published?)'; }));
+      unsub.push(db.collection('widget_licenses').onSnapshot(snap => {
+        licenses = {}; snap.forEach(d => licenses[d.id] = d.data().status || '');
+        draw();
+      }, e => { $('msg').textContent = 'Could not load licenses: ' + e.message; }));
+      setTimeout(() => { try { localStorage.setItem('ws-dash-last', Date.now()); } catch (e) {} }, 5000);
+    });
+
+    $('notify').onclick = async () => {
+      if (!('Notification' in window)) return alert('This browser does not support notifications.');
+      const p = await Notification.requestPermission();
+      alerts = p === 'granted';
+      $('notify').textContent = alerts ? '🔔 Alerts on while this tab is open' : '🔕 Notifications blocked';
+    };
+    $('q').oninput = draw; $('f').onchange = draw;
+
+    function statusOf(i) { return licenses[i.id] || 'unknown'; }
+    function draw() {
+      const q = $('q').value.trim().toLowerCase(), f = $('f').value;
+      const list = installs.slice().sort((a, b) => (b.lastSeen && b.lastSeen.toMillis ? b.lastSeen.toMillis() : 0) - (a.lastSeen && a.lastSeen.toMillis ? a.lastSeen.toMillis() : 0))
+        .filter(i => (!q || String(i.host).includes(q)) && (!f || statusOf(i) === f || i.product === f));
+      $('s-total').textContent = new Set(installs.map(i => i.host)).size;
+      $('s-unknown').textContent = installs.filter(i => statusOf(i) === 'unknown').length;
+      $('s-approved').textContent = installs.filter(i => statusOf(i) === 'approved').length;
+      $('s-blocked').textContent = installs.filter(i => statusOf(i) === 'blocked').length;
+      $('empty').hidden = installs.length > 0;
+      $('rows').innerHTML = list.map(i => {
+        const st = statusOf(i), isNew = i.firstSeen && i.firstSeen.toMillis && i.firstSeen.toMillis() > lastVisit;
+        return `<tr>
+          <td><a href="https://${esc(i.host)}${esc(i.page || '/')}" target="_blank" rel="noopener">${esc(i.host)}</a>${isNew ? '<span class="new">NEW</span>' : ''}<br><span class="muted">${esc(i.page || '/')}</span></td>
+          <td><span class="tag ${i.product === 'ada' ? 'ada' : 'cookie'}">${i.product === 'ada' ? 'ADA toolbar' : 'Cookie banner'}</span></td>
+          <td><span class="tag ${st}">${st === 'unknown' ? 'Not approved yet' : st === 'approved' ? 'Approved client' : 'Blocked'}</span></td>
+          <td class="muted">${fmt(i.firstSeen)}</td><td class="muted">${fmt(i.lastSeen)}</td><td>${+i.hits || 0}</td>
+          <td><div class="actions">
+            ${st !== 'approved' ? `<button class="btn green" data-set="approved" data-id="${esc(i.id)}">Approve</button>` : ''}
+            ${st !== 'blocked' ? `<button class="btn red" data-set="blocked" data-id="${esc(i.id)}">Block</button>` : ''}
+            ${st !== 'unknown' ? `<button class="btn" data-set="" data-id="${esc(i.id)}">Reset</button>` : ''}
+            <button class="btn" data-del="${esc(i.id)}" title="Remove from this list">Remove</button>
+          </div></td></tr>`;
+      }).join('');
+    }
+
+    $('rows').addEventListener('click', async e => {
+      const s = e.target.closest('[data-set]'), d = e.target.closest('[data-del]');
+      try {
+        if (s) {
+          const id = s.dataset.id, status = s.dataset.set;
+          if (status === 'blocked' && !confirm('Block ' + id.split('__')[1] + '? The widget will stop showing on that website.')) return;
+          if (status) await db.collection('widget_licenses').doc(id).set({ status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
+          else await db.collection('widget_licenses').doc(id).delete();
+        }
+        if (d && confirm('Remove ' + d.dataset.del.split('__')[1] + ' from this list? It will come back if the website loads the widget again.')) await db.collection('widget_installs').doc(d.dataset.del).delete();
+      } catch (err) { alert('Could not save: ' + err.message); }
+    });
+  </script>
+</body>
+</html>

@@ -51,7 +51,7 @@ The public GitHub repository is named `access-link`. GitHub Pages serves `index.
 - Vision, reading, and low-motion quick profiles
 - Reset and preference saving in `localStorage`
 
-The widget sends no analytics, uses no cookies, loads no fonts or icons, and makes no network request after `widget.js` is loaded.
+The widget sends no visitor analytics, uses no cookies, and loads no fonts or icons. Once a day per browser it sends WebSwan the website's address and page path (never anything about the visitor) so the owner can see which sites run the widget. See **License check and install alerts** below.
 
 ## Compliance and sales language
 
@@ -83,3 +83,92 @@ For a stronger service, combine the widget with:
 ## Browser support
 
 Current versions of Chrome, Edge, Firefox, and Safari. The widget uses Shadow DOM when available to reduce conflicts with host-site styling and falls back to normal DOM on older browsers.
+
+---
+
+# Cookie Consent Banner (cookie.js)
+
+Same one-line install as the ADA toolbar. Demo and private embed code: `https://taniad2169.github.io/access-link/cookie.html`
+
+```html
+<script
+  src="https://taniad2169.github.io/access-link/cookie.js"
+  data-company="Smile Dental"
+  data-privacy-url="https://smiledental.com/privacy"
+  data-contact-email="office@smiledental.com">
+</script>
+```
+
+- `data-company`: Business name shown in the banner.
+- `data-privacy-url`: Link to the website's privacy policy (recommended).
+- `data-contact-email`: Optional email for privacy requests.
+- `data-color`: Button color (default WebSwan blue `#339cde`).
+- `data-position`: Side of the small cookie button that reopens the choices, `left` (default, so it does not sit on the ADA button) or `right`.
+- `data-show-button="false"`: Hide the floating cookie button (then add a "Cookie settings" link in the footer, see below).
+- `data-branding="false"`: Hide "Privacy center by WebSwan Digital Solutions".
+- `data-expires-days`: How long a choice is remembered (30 to 395, default 365).
+
+## What visitors see
+
+1. A banner with **Accept all**, **Reject all**, **Choose what to share** and **Do Not Sell or Share My Personal Information**.
+2. Do Not Sell opens the privacy center with the disclaimer and turns off Marketing and Sale or sharing; the visitor presses **Save and close**.
+3. The privacy center has switches for Functional, Analytics, Marketing and Sale or sharing (Strictly necessary is always on).
+4. After choosing, a small cookie button lets the visitor change their mind at any time.
+5. A browser's **Global Privacy Control** signal is honored automatically (sale, sharing and targeted ads stay off).
+
+Footer links: any link to `#cookie-settings` opens the privacy center, and any link to `#do-not-sell` opens it in Do Not Sell mode. `data-webswan-cookie-settings` on any element does the same.
+
+## How choices are enforced
+
+- **Google Consent Mode v2:** defaults to denied, updated when the visitor chooses (works with Google Analytics, Google Ads and Google Tag Manager).
+- **Meta Pixel:** `fbq('consent','grant' | 'revoke')`.
+- **Any other script or iframe:** tag it and it stays off until allowed:
+  ```html
+  <script type="text/plain" data-cookie-category="analytics" src="https://example.com/tracker.js"></script>
+  <iframe data-src="https://www.youtube.com/embed/..." data-cookie-category="functional"></iframe>
+  ```
+- Events: `window` fires `webswan:consent`, and `dataLayer` gets `webswan_consent_update`.
+- JavaScript: `WebSwanCookies.open()`, `WebSwanCookies.openDoNotSell()`, `WebSwanCookies.getConsent()`, `WebSwanCookies.allowed('analytics')`.
+
+Website builders (Wix, Squarespace, GoDaddy, Square) load some trackers themselves. Turn on each platform's own cookie or consent setting too, or those built-in trackers may still run.
+
+## Compliance language
+
+Safe description:
+
+> A cookie consent banner that lets visitors accept, reject, or opt out of the sale and sharing of their personal information, and that passes those choices to Google, Meta and tagged scripts. It supports a privacy program but does not certify or guarantee compliance with the CCPA/CPRA, GDPR, or any other law.
+
+---
+
+# License check and install alerts (both widgets)
+
+Every time a browser loads `widget.js` or `cookie.js` on a real website (not localhost), it:
+
+1. Checks `widget_licenses/{product}__{website}` in the WebSwan Firebase project. If the status is `blocked`, the widget removes itself from that website.
+2. Once a day per browser, reports the website address, page path, first seen, last seen and a visit count to `widget_installs`. Nothing about the visitor is sent.
+
+Owner dashboard: `https://taniad2169.github.io/access-link/dashboard.html` (Google sign-in, thewebswann@gmail.com only). New websites are marked **NEW** and **Not approved yet**. Press **Approve** for paying clients or **Block** for anyone using the widget without permission. "Alert me in this tab" shows a desktop notification when a new website appears while the dashboard is open.
+
+Firestore rules required (add inside `match /databases/{database}/documents { ... }`):
+
+```
+function isOwner() { return request.auth != null && request.auth.token.email == 'thewebswann@gmail.com'; }
+match /widget_installs/{id} {
+  allow read, delete: if isOwner();
+  allow create: if request.resource.data.keys().hasOnly(['product','host','page','firstSeen','lastSeen','hits'])
+    && request.resource.data.product in ['cookie','ada']
+    && request.resource.data.host is string && request.resource.data.host.size() <= 253
+    && request.resource.data.page is string && request.resource.data.page.size() <= 300
+    && id == request.resource.data.product + '__' + request.resource.data.host
+    && request.resource.data.hits == 1
+    && request.resource.data.firstSeen == request.time && request.resource.data.lastSeen == request.time;
+  allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['page','lastSeen','hits'])
+    && request.resource.data.page is string && request.resource.data.page.size() <= 300
+    && request.resource.data.hits == resource.data.hits + 1
+    && request.resource.data.lastSeen == request.time;
+}
+match /widget_licenses/{id} {
+  allow read: if true;
+  allow write: if isOwner();
+}
+```

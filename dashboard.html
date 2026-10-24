@@ -13,7 +13,7 @@
     header h1{font-size:24px;margin:0}header p{color:#d6ebfa;margin:4px 0 0;font-size:14px}
     main{max-width:1100px;margin:0 auto;padding:24px clamp(16px,4vw,32px) 60px}
     .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
-    .btn{background:#fff;border:2px solid #9fb0c8;border-radius:9px;color:var(--ink);cursor:pointer;font:inherit;font-size:13px;font-weight:800;padding:7px 12px}
+    .btn{text-decoration:none;display:inline-block;background:#fff;border:2px solid #9fb0c8;border-radius:9px;color:var(--ink);cursor:pointer;font:inherit;font-size:13px;font-weight:800;padding:7px 12px}
     .btn.blue{background:var(--blue);border-color:var(--blue);color:#fff}
     .btn.green{border-color:#2f8f57;color:#1f6b40}.btn.red{border-color:#c0392b;color:#a12a1f}
     .stats{display:grid;gap:12px;grid-template-columns:repeat(4,1fr);margin:0 0 18px}
@@ -27,7 +27,7 @@
     td{border-top:1px solid var(--line);padding:10px 8px;vertical-align:middle}
     td a{color:#0b5c94;font-weight:700}
     .tag{border-radius:999px;display:inline-block;font-size:11px;font-weight:800;padding:3px 9px;white-space:nowrap}
-    .tag.approved{background:#e3f5ea;color:#1f6b40}.tag.blocked{background:#fde6e3;color:#a12a1f}.tag.unknown{background:#fff1d6;color:#8a4b00}
+    .tag.approved{background:#e3f5ea;color:#1f6b40}.tag.paused{background:#ece9ff;color:#4a3aa8}.tag.blocked{background:#fde6e3;color:#a12a1f}.tag.unknown{background:#fff1d6;color:#8a4b00}
     .tag.cookie{background:#e6f4fc;color:#145c87}.tag.ada{background:#ece9ff;color:#4a3aa8}
     .new{background:#c0392b;border-radius:6px;color:#fff;font-size:10px;font-weight:800;margin-left:6px;padding:1px 6px}
     .muted{color:var(--muted);font-size:12px}
@@ -38,7 +38,7 @@
   </style>
 </head>
 <body>
-  <header><h1>🦢 Widget installs</h1><p>Every website running your ADA toolbar or cookie banner. Approve your clients and block anyone using it without permission.</p></header>
+  <header><h1>🦢 Widget installs</h1><p>Every website running your ADA toolbar or cookie banner. Approve your clients, pause anyone who stops paying, and block anyone using it without permission.</p></header>
   <main>
     <div id="signin" class="card center">
       <p><b>Owner sign-in</b></p>
@@ -52,12 +52,12 @@
         <div class="stat"><b id="s-total">0</b><span>Websites</span></div>
         <div class="stat warn"><b id="s-unknown">0</b><span>Not approved yet</span></div>
         <div class="stat"><b id="s-approved">0</b><span>Approved clients</span></div>
-        <div class="stat"><b id="s-blocked">0</b><span>Blocked</span></div>
+        <div class="stat"><b id="s-blocked">0</b><span>Paused or blocked</span></div>
       </div>
       <div class="card">
         <div class="toolbar">
           <input id="q" type="search" placeholder="Search a website…" aria-label="Search websites">
-          <select id="f" aria-label="Filter"><option value="">All</option><option value="unknown">Not approved yet</option><option value="approved">Approved</option><option value="blocked">Blocked</option><option value="cookie">Cookie banner</option><option value="ada">ADA toolbar</option></select>
+          <select id="f" aria-label="Filter"><option value="">All</option><option value="unknown">Not approved yet</option><option value="approved">Approved</option><option value="paused">Paused (unpaid)</option><option value="blocked">Blocked</option><option value="cookie">Cookie banner</option><option value="ada">ADA toolbar</option></select>
           <button class="btn" id="notify">🔔 Alert me in this tab</button>
           <button class="btn" id="logout">Sign out</button>
         </div>
@@ -124,6 +124,16 @@
     $('q').oninput = draw; $('f').onchange = draw;
 
     function statusOf(i) { return licenses[i.id] || 'unknown'; }
+    function mailto(i, st) {
+      const w = i.product === 'ada' ? 'accessibility (ADA) toolbar' : 'cookie consent banner';
+      const subj = st === 'paused' ? 'Your ' + w + ' on ' + i.host + ' is paused' : st === 'blocked' ? 'Unlicensed WebSwan ' + w + ' on ' + i.host : 'Your ' + w + ' on ' + i.host;
+      const body = st === 'paused'
+        ? 'Hello,\n\nThe WebSwan ' + w + ' on ' + i.host + ' has been paused because your subscription is past due. Your visitors now see a notice that it is inactive.\n\nTo reactivate it, simply bring your account up to date and we will turn it back on right away.\n\nThank you,\nTania Domingue\nWebSwan Digital Solutions\nhttps://webswandigitalsolutions.com'
+        : st === 'blocked'
+        ? 'Hello,\n\nWe noticed that ' + i.host + ' is running the WebSwan ' + w + ' without a license from WebSwan Digital Solutions. The widget has been turned off on your website, and your visitors now see a notice that it is not licensed.\n\nIf you would like a licensed copy with support, reply to this email and we will set you up.\n\nTania Domingue\nWebSwan Digital Solutions\nhttps://webswandigitalsolutions.com'
+        : 'Hello,\n\nThis is Tania from WebSwan Digital Solutions about the ' + w + ' on ' + i.host + '.\n\n';
+      return 'mailto:?subject=' + encodeURIComponent(subj) + '&body=' + encodeURIComponent(body);
+    }
     function draw() {
       const q = $('q').value.trim().toLowerCase(), f = $('f').value;
       const list = installs.slice().sort((a, b) => (b.lastSeen && b.lastSeen.toMillis ? b.lastSeen.toMillis() : 0) - (a.lastSeen && a.lastSeen.toMillis ? a.lastSeen.toMillis() : 0))
@@ -131,18 +141,20 @@
       $('s-total').textContent = new Set(installs.map(i => i.host)).size;
       $('s-unknown').textContent = installs.filter(i => statusOf(i) === 'unknown').length;
       $('s-approved').textContent = installs.filter(i => statusOf(i) === 'approved').length;
-      $('s-blocked').textContent = installs.filter(i => statusOf(i) === 'blocked').length;
+      $('s-blocked').textContent = installs.filter(i => statusOf(i) === 'blocked' || statusOf(i) === 'paused').length;
       $('empty').hidden = installs.length > 0;
       $('rows').innerHTML = list.map(i => {
         const st = statusOf(i), isNew = i.firstSeen && i.firstSeen.toMillis && i.firstSeen.toMillis() > lastVisit;
         return `<tr>
           <td><a href="https://${esc(i.host)}${esc(i.page || '/')}" target="_blank" rel="noopener">${esc(i.host)}</a>${isNew ? '<span class="new">NEW</span>' : ''}<br><span class="muted">${esc(i.page || '/')}</span></td>
           <td><span class="tag ${i.product === 'ada' ? 'ada' : 'cookie'}">${i.product === 'ada' ? 'ADA toolbar' : 'Cookie banner'}</span></td>
-          <td><span class="tag ${st}">${st === 'unknown' ? 'Not approved yet' : st === 'approved' ? 'Approved client' : 'Blocked'}</span></td>
+          <td><span class="tag ${st}">${({unknown:'Not approved yet', approved:'Approved client', paused:'Paused (unpaid)', blocked:'Blocked'})[st] || st}</span></td>
           <td class="muted">${fmt(i.firstSeen)}</td><td class="muted">${fmt(i.lastSeen)}</td><td>${+i.hits || 0}</td>
           <td><div class="actions">
             ${st !== 'approved' ? `<button class="btn green" data-set="approved" data-id="${esc(i.id)}">Approve</button>` : ''}
+            ${st !== 'paused' ? `<button class="btn" data-set="paused" data-id="${esc(i.id)}" title="Turn off for non-payment">Pause</button>` : ''}
             ${st !== 'blocked' ? `<button class="btn red" data-set="blocked" data-id="${esc(i.id)}">Block</button>` : ''}
+            <a class="btn" href="${mailto(i, st)}" title="Write to the website owner">Email owner</a>
             ${st !== 'unknown' ? `<button class="btn" data-set="" data-id="${esc(i.id)}">Reset</button>` : ''}
             <button class="btn" data-del="${esc(i.id)}" title="Remove from this list">Remove</button>
           </div></td></tr>`;
@@ -154,7 +166,8 @@
       try {
         if (s) {
           const id = s.dataset.id, status = s.dataset.set;
-          if (status === 'blocked' && !confirm('Block ' + id.split('__')[1] + '? The widget will stop showing on that website.')) return;
+          if (status === 'blocked' && !confirm('Block ' + id.split('__')[1] + '? The widget turns off and the website shows a notice that it is not licensed.')) return;
+          if (status === 'paused' && !confirm('Pause ' + id.split('__')[1] + '? The widget turns off and the website shows a notice that the subscription is inactive.')) return;
           if (status) await db.collection('widget_licenses').doc(id).set({ status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() });
           else await db.collection('widget_licenses').doc(id).delete();
         }

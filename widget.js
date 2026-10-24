@@ -395,6 +395,29 @@
     });
   }
 
+
+  // Small notice shown when WebSwan turns this widget off (unpaid = paused, unlicensed = blocked).
+  function showLicenseNotice(product, status) {
+    try { if (sessionStorage.getItem("ws-notice-closed-" + product)) return; } catch (e) { /* ignore */ }
+    var name = product === "ada" ? "accessibility toolbar" : "cookie consent banner";
+    var text = status === "paused"
+      ? "This website\u2019s " + name + " is paused because the subscription is inactive. Website owner: contact WebSwan Digital Solutions to reactivate it."
+      : "This " + name + " is not licensed for this website and has been turned off. Website owner: contact WebSwan Digital Solutions to get a licensed copy.";
+    var existing = document.getElementById("webswan-license-notice");
+    if (existing) { var extra = document.createElement("p"); extra.style.margin = "6px 0 0"; extra.textContent = text; existing.insertBefore(extra, existing.querySelector("a")); return; }
+    var box = document.createElement("div");
+    box.id = "webswan-license-notice";
+    box.setAttribute("role", "status");
+    box.style.cssText = "position:fixed;z-index:2147483647;left:12px;bottom:12px;max-width:min(420px,calc(100vw - 24px));background:#0d2745;color:#fff;font:13px/1.45 Arial,Helvetica,sans-serif;padding:10px 38px 10px 14px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.3)";
+    box.innerHTML = escapeHtml(text) + ' <a href="https://webswandigitalsolutions.com" target="_blank" rel="noopener" style="color:#93e5fa;font-weight:700">webswandigitalsolutions.com</a>' +
+      '<button type="button" aria-label="Close notice" style="position:absolute;right:6px;top:6px;background:none;border:0;color:#fff;font-size:20px;line-height:1;cursor:pointer">\u00d7</button>';
+    box.querySelector("button").addEventListener("click", function () {
+      box.parentNode.removeChild(box);
+      try { sessionStorage.setItem("ws-notice-closed-" + product, "1"); } catch (e) { /* ignore */ }
+    });
+    (document.body || document.documentElement).appendChild(box);
+  }
+
   /* ---------- WebSwan license check and install report ---------- */
   // Sends only this website's address and page path (never anything about the visitor), at most once a day per browser.
   function licenseCheck(product, onBlocked) {
@@ -405,12 +428,12 @@
     var key = "AIzaSyAqhqUzWqpS7YunkODJU_udTBG3pjsJegQ";
     var cacheKey = "ws-lic-" + id, today = new Date().toISOString().slice(0, 10), cache = {};
     try { cache = JSON.parse(localStorage.getItem(cacheKey) || "{}"); } catch (e) { cache = {}; }
-    if (cache.status === "blocked" && cache.day === today) { onBlocked(); return; }
+    if ((cache.status === "blocked" || cache.status === "paused") && cache.day === today) { onBlocked(cache.status); return; }
     if (!window.fetch) return;
     fetch(base + ":batchGet?key=" + key, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ documents: ["projects/webswan-marketing/databases/(default)/documents/widget_licenses/" + id] }) }).then(function (r) { return r.ok ? r.json() : null; }).then(function (res) {
       var doc = res && res[0] && res[0].found;
       var status = doc && doc.fields && doc.fields.status && doc.fields.status.stringValue || "";
-      if (status === "blocked") onBlocked();
+      if (status === "blocked" || status === "paused") onBlocked(status);
       if (cache.day !== today || cache.status !== status) report();
       try { localStorage.setItem(cacheKey, JSON.stringify({ day: today, status: status })); } catch (e) { /* ignore */ }
     }).catch(function () { /* offline or blocked: never break the site */ });
@@ -435,7 +458,8 @@
 
   function boot() {
     start();
-    licenseCheck("ada", function () {
+    licenseCheck("ada", function (status) {
+      showLicenseNotice("ada", status);
       var el = document.getElementById(HOST_ID);
       if (el) el.parentNode.removeChild(el);
       var st = document.getElementById(STYLE_ID);

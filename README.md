@@ -144,10 +144,10 @@ Safe description:
 
 Every time a browser loads `widget.js` or `cookie.js` on a real website (not localhost), it:
 
-1. Checks `widget_licenses/{product}__{website}` in the WebSwan Firebase project. If the status is `blocked`, the widget removes itself from that website.
+1. Checks `widget_licenses/{product}__{website}` in the WebSwan Firebase project. Status `paused` (unpaid subscription) or `blocked` (unlicensed) turns the widget off on that website and shows a small notice telling the website owner to contact WebSwan Digital Solutions. `approved` or no status keeps it running.
 2. Once a day per browser, reports the website address, page path, first seen, last seen and a visit count to `widget_installs`. Nothing about the visitor is sent.
 
-Owner dashboard: `https://taniad2169.github.io/access-link/dashboard.html` (Google sign-in, thewebswann@gmail.com only). New websites are marked **NEW** and **Not approved yet**. Press **Approve** for paying clients or **Block** for anyone using the widget without permission. "Alert me in this tab" shows a desktop notification when a new website appears while the dashboard is open.
+Owner dashboard: `https://taniad2169.github.io/access-link/dashboard.html` (Google sign-in, thewebswann@gmail.com only). New websites are marked **NEW** and **Not approved yet**. Press **Approve** for paying clients, **Pause** for clients who stop paying (press **Approve** again when they pay), or **Block** for anyone using the widget without permission. **Email owner** opens a ready-to-send email (paused or unlicensed notice) in your mail app. Changes reach visitors right away; returning visitors can keep a cached status for up to one day. "Alert me in this tab" shows a desktop notification when a new website appears while the dashboard is open.
 
 Firestore rules required (add inside `match /databases/{database}/documents { ... }`):
 

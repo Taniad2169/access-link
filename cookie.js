@@ -376,13 +376,13 @@
       function commit(write) {
         return fetch(base + ":commit?key=" + key, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ writes: [write] }), keepalive: true });
       }
-      commit({
-        update: { name: name, fields: { product: { stringValue: product }, host: { stringValue: hostName }, page: { stringValue: page } } },
-        updateTransforms: transforms.concat([{ fieldPath: "firstSeen", setToServerValue: "REQUEST_TIME" }]),
-        currentDocument: { exists: false }
-      }).then(function (r) {
+      commit({ update: { name: name, fields: { page: { stringValue: page } } }, updateMask: { fieldPaths: ["page"] }, updateTransforms: transforms, currentDocument: { exists: true } }).then(function (r) {
         if (r.ok) return;
-        return commit({ update: { name: name, fields: { page: { stringValue: page } } }, updateMask: { fieldPaths: ["page"] }, updateTransforms: transforms, currentDocument: { exists: true } });
+        return commit({
+          update: { name: name, fields: { product: { stringValue: product }, host: { stringValue: hostName }, page: { stringValue: page } } },
+          updateTransforms: transforms.concat([{ fieldPath: "firstSeen", setToServerValue: "REQUEST_TIME" }]),
+          currentDocument: { exists: false }
+        });
       }).catch(function () { /* ignore */ });
     }
   }

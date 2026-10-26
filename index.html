@@ -41,6 +41,9 @@
     .modal-close{background:#edf2f7;border:0;border-radius:8px;color:var(--navy);cursor:pointer;font-size:25px;height:38px;line-height:1;position:absolute;right:14px;top:14px;width:38px}
     .unlock-panel{border-top:1px solid #dce4ef;margin-top:22px;padding-top:22px}.unlock-panel[hidden]{display:none}
     .access-status{color:#175b42!important;font-size:14px;font-weight:800}
+    .code-label{color:var(--navy)!important;font-weight:800;text-align:left;margin:16px 0 6px!important}.code-label small{color:var(--muted);font-weight:600}
+    .copy-both{background:var(--navy);color:#fff;margin-top:16px}
+    .private-hint{font-size:14px;margin:12px 0 0!important}
     .note{background:#fff7db;border:1px solid #efcf67;border-radius:14px;color:#463b17;margin-top:30px;padding:18px 20px}.note strong{display:block}
     footer{color:#647084;font-size:13px;padding:34px;text-align:center}
     @media(max-width:800px){.hero,.install{grid-template-columns:1fr}.hero{margin-top:52px}.features{grid-template-columns:1fr}.hero-card{transform:none}}
@@ -88,8 +91,14 @@
       <button class="secret-lock" id="secret-lock" type="button" aria-label="Private access lock"><span aria-hidden="true">🔒</span></button>
       <div class="unlock-panel" id="unlock-panel" hidden>
         <p class="access-status" role="status">Access unlocked</p>
+        <p class="code-label">&#9855; ADA button</p>
         <code class="code" id="embed-code">&lt;script src="https://taniad2169.github.io/access-link/widget.js"&gt;&lt;/script&gt;</code>
-        <button class="copy" id="copy" type="button">Copy and share widget code</button>
+        <button class="copy" id="copy" type="button">Copy ADA code</button>
+        <p class="code-label">&#127850; Cookie banner <small>(change the business name and privacy page link)</small></p>
+        <code class="code" id="cookie-code">&lt;script src="https://taniad2169.github.io/access-link/cookie.js" data-company="Business Name" data-privacy-url="https://example.com/privacy"&gt;&lt;/script&gt;</code>
+        <button class="copy" id="copy-cookie" type="button">Copy cookie code</button>
+        <button class="copy copy-both" id="copy-both" type="button">Copy BOTH (ADA + cookie)</button>
+        <p class="private-hint"><a href="cookie.html">See the cookie banner demo &rarr;</a></p>
       </div>
     </div>
   </div>
@@ -141,10 +150,17 @@
     accessModal.addEventListener('click',event=>{if(event.target===accessModal)closeAccess()});
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!accessModal.hidden)closeAccess()});
 
-    document.getElementById('copy').addEventListener('click',async function(){
-      const value=document.getElementById('embed-code').textContent;
-      try{await navigator.clipboard.writeText(value);this.textContent='Copied and ready to share!';setTimeout(()=>this.textContent='Copy and share widget code',1800)}catch(error){window.prompt('Copy this code:',value)}
-    });
+    function wireCopy(id,getValue,label){
+      document.getElementById(id).addEventListener('click',async function(){
+        const value=getValue();
+        try{await navigator.clipboard.writeText(value);this.textContent='Copied and ready to share!';setTimeout(()=>this.textContent=label,1800)}catch(error){window.prompt('Copy this code:',value)}
+      });
+    }
+    const adaCode=()=>document.getElementById('embed-code').textContent;
+    const cookieCode=()=>document.getElementById('cookie-code').textContent;
+    wireCopy('copy',adaCode,'Copy ADA code');
+    wireCopy('copy-cookie',cookieCode,'Copy cookie code');
+    wireCopy('copy-both',()=>adaCode()+'\n'+cookieCode(),'Copy BOTH (ADA + cookie)');
   </script>
 </body>
 </html>

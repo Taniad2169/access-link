@@ -44,7 +44,10 @@
     .code-label{color:var(--navy)!important;font-weight:800;text-align:left;margin:16px 0 6px!important}.code-label small{color:var(--muted);font-weight:600}
     .copy-both{background:var(--navy);color:#fff;margin-top:16px}
     .private-hint{font-size:14px;margin:12px 0 0!important}
-    .welcome-box{border-bottom:1px solid #dce4ef;margin-bottom:6px;padding-bottom:16px;text-align:left}
+    .welcome-box{background:#f2f6fb;border:2px dashed #9fb3cc;border-radius:14px;margin-top:10px;padding:14px;text-align:left}
+    .paste-head{background:#e9f7ee;border:1px solid #9ad3ad;border-radius:10px;color:#17502b!important;font-weight:800;margin:6px 0 4px!important;padding:8px 12px;text-align:left}
+    .paste-tag{background:#fff7db;border:1px solid #efcf67;border-radius:10px;color:#463b17!important;font-size:13px;font-weight:800;margin:18px 0 0!important;padding:8px 12px;text-align:left}
+    .wb-link{background:#fff!important;border:1px solid #b9c5d6!important;color:#0b51bd!important}
     .wb-grid{display:grid;gap:8px 12px;grid-template-columns:1fr 1fr}
     .wb-grid label{color:var(--navy);font-size:12px;font-weight:800;text-align:left}
     .wb-grid input,.wb-grid select{border:1px solid #b9c5d6;border-radius:8px;font:inherit;font-size:13px;margin-top:3px;padding:8px;width:100%}
@@ -97,8 +100,18 @@
       <button class="secret-lock" id="secret-lock" type="button" aria-label="Private access lock"><span aria-hidden="true">🔒</span></button>
       <div class="unlock-panel" id="unlock-panel" hidden>
         <p class="access-status" role="status">Access unlocked</p>
+
+        <p class="paste-head">&#128187; PASTE ON THE WEBSITE &mdash; site-wide custom code</p>
+        <p class="code-label">&#9855; ADA button</p>
+        <code class="code" id="embed-code">&lt;script src="https://taniad2169.github.io/access-link/widget.js"&gt;&lt;/script&gt;</code>
+        <button class="copy" id="copy" type="button">Copy ADA code</button>
+        <p class="code-label">&#127850; Cookie banner <small>(change the business name and privacy page link)</small></p>
+        <code class="code" id="cookie-code">&lt;script src="https://taniad2169.github.io/access-link/cookie.js" data-company="Business Name" data-privacy-url="https://example.com/privacy"&gt;&lt;/script&gt;</code>
+        <button class="copy" id="copy-cookie" type="button">Copy cookie code</button>
+        <button class="copy copy-both" id="copy-both" type="button">Copy BOTH (ADA + cookie)</button>
+        <p class="paste-tag">&#9888;&#65039; Everything ABOVE is code for the WEBSITE. Everything BELOW is a link to SEND to the client.</p>
         <div class="welcome-box">
-          <p class="code-label">&#9993;&#65039; Client welcome link <small>(welcome letter, install steps, disclaimer to sign, then their code)</small></p>
+          <p class="code-label">&#128233; SEND TO CLIENT &mdash; welcome link <small>(text or email it. Do NOT paste it on a website)</small></p>
           <div class="wb-grid">
             <label>Business name<input id="w-company" placeholder="Smile Dental"></label>
             <label>Client name<input id="w-client" placeholder="Jane Smith"></label>
@@ -111,13 +124,6 @@
           <code class="code wb-link" id="welcome-link"></code>
           <button class="copy copy-both" id="copy-welcome" type="button">Copy client welcome link</button>
         </div>
-        <p class="code-label">&#9855; ADA button</p>
-        <code class="code" id="embed-code">&lt;script src="https://taniad2169.github.io/access-link/widget.js"&gt;&lt;/script&gt;</code>
-        <button class="copy" id="copy" type="button">Copy ADA code</button>
-        <p class="code-label">&#127850; Cookie banner <small>(change the business name and privacy page link)</small></p>
-        <code class="code" id="cookie-code">&lt;script src="https://taniad2169.github.io/access-link/cookie.js" data-company="Business Name" data-privacy-url="https://example.com/privacy"&gt;&lt;/script&gt;</code>
-        <button class="copy" id="copy-cookie" type="button">Copy cookie code</button>
-        <button class="copy copy-both" id="copy-both" type="button">Copy BOTH (ADA + cookie)</button>
         <p class="private-hint"><a href="cookie.html">See the cookie banner demo &rarr;</a></p>
       </div>
     </div>

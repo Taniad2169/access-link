@@ -29,7 +29,7 @@ h2:first-child{margin-top:0}
 .disclaimer{max-height:none}
 .disclaimer h3{font-size:16px;margin:16px 0 4px}.disclaimer h3:first-child{margin-top:0}
 .disclaimer p,.disclaimer li{font-size:14px;color:#2c3e50}
-.disclaimer ol{padding-left:20px;margin:6px 0}
+.disclaimer ol{padding-left:20px;margin:6px 0}.disclaimer ul{padding-left:18px;margin:6px 0}.disclaimer ul li{margin:3px 0}
 .grid{display:grid;gap:12px 16px;grid-template-columns:1fr 1fr}
 .grid .full{grid-column:1/-1}
 label.f{display:block;font-size:13px;font-weight:800;color:var(--navy)}
@@ -102,6 +102,20 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding:20px}
           <li><b>Your responsibility for full compliance.</b> You, the website owner, together with your website platform or provider (for example Wix, GoDaddy, Square, WordPress, Squarespace, Shopify or any other builder), are solely responsible for the full compliance of your website with the Americans with Disabilities Act (ADA), WCAG, Section 508, and all federal, state and local privacy and consumer-protection laws, including the CCPA/CPRA and other state privacy laws. This includes your website's content, images, videos, documents, forms, checkout, privacy policy, accessibility statement, and your platform's own built-in trackers and cookie settings.</li>
           <li><b>No guarantee.</b> The widget is a tool that supports your accessibility and privacy efforts. It does not scan, repair, certify, or guarantee that your website complies with any law, and WebSwan does not provide legal advice. You should consult your own attorney about your obligations.</li>
           <li><b>Installation.</b> You or your platform install the code. WebSwan is not responsible for platform limits, plan restrictions, code removed by your platform, or conflicts with other scripts.</li>
+          <li><b>Third-party platforms we do not operate.</b> WebSwan Digital Solutions creates and tests the accessibility (ADA) buttons and the cookie and privacy banners before releasing them. However, they will be placed on a website platform that WebSwan does not own, operate, or manage (for example Wix, GoDaddy, WordPress, Square, Squarespace, Shopify, Webflow, Duda, Weebly, AI website builders, or any other host or builder). Those platforms, and the themes, apps and plugins installed on them, change on their own schedule and without notice to WebSwan. As a result, the buttons and banners may stop appearing, appear in the wrong place, or not work correctly. Known causes include:
+            <ul>
+              <li>Platform, theme or editor updates, redesigns, or a change of template that removes, moves or rewrites the custom code.</li>
+              <li>Security updates and security settings, such as a Content Security Policy, firewall, or security plugin (for example Wordfence or Sucuri), that block scripts loaded from outside the platform.</li>
+              <li>Speed, caching and optimization tools (for example WP Rocket, LiteSpeed Cache, Autoptimize, Cloudflare Rocket Loader, or a platform's own "lazy load" or "minify" settings) that delay, combine, or alter scripts.</li>
+              <li>Plan changes: downgrading, an expired plan, or an unconnected or changed domain that turns off custom code (for example on Wix, Squarespace, Square Online and WordPress.com).</li>
+              <li>Page builders and embed boxes (for example Elementor, Divi, or a platform "Embed" or "HTML" element) that place the code inside a frame, so it only works inside that box.</li>
+              <li>The platform's own cookie banner, consent tool, chat widget, pop-up, or other floating buttons overlapping or conflicting with ours, and the platform's own trackers that load outside of our consent controls.</li>
+              <li>Other apps, plugins or scripts on the website (including translation, analytics, tag manager, or accessibility overlay tools) that conflict with ours.</li>
+              <li>AI website builders regenerating or rebuilding the website and removing the code.</li>
+              <li>Visitors' browsers, extensions, ad blockers, or privacy settings that block or hide third-party scripts.</li>
+              <li>Outages or changes at internet, hosting or content-delivery services outside WebSwan's control.</li>
+            </ul>
+            WebSwan Digital Solutions takes no responsibility for any malfunction, broken display, missing buttons or banners, or any resulting compliance issue caused by third-party platforms, plugins, apps, updates or settings. It is your responsibility to check your website regularly, especially after any platform, theme or plugin update, and to tell WebSwan if something looks wrong. While your subscription is active, WebSwan may, at its discretion, help you reinstall the code, but this help does not create any responsibility or guarantee.</li>
           <li><b>License for one website.</b> Your license covers only the website address you list below. You may not copy, share, resell, or install the code on any other website. The widget reports the website address where it is installed so WebSwan can confirm authorized use.</li>
           <li><b>Subscription and deactivation.</b> If your subscription payment is not received, WebSwan may pause the widget on your website until payment is made, and will reactivate it once your account is current. Unauthorized installations may be blocked.</li>
           <li><b>Limitation of liability.</b> To the fullest extent allowed by law, WebSwan is not liable for any claim, demand letter, lawsuit, fine, penalty, or loss related to the accessibility or privacy compliance of your website, and you agree to hold WebSwan harmless from such claims.</li>
@@ -120,7 +134,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding:20px}
         </div>
         <button type="button" class="sigbox" id="sigBox" aria-label="Click to adopt your signature">✍️ Click here to choose your signature</button>
         <p class="sigmeta">Date: <b id="sigDate">—</b></p>
-        <label class="agree"><input type="checkbox" id="agree"> <span>I have read the Service Disclaimer and License Agreement above. I understand that WebSwan provides the widget and that I and my website platform are responsible for the full compliance of my website. I agree to sign electronically.</span></label>
+        <label class="agree"><input type="checkbox" id="agree"> <span>I have read the Service Disclaimer and License Agreement above. I understand that WebSwan provides the widget, that I and my website platform are responsible for the full compliance of my website, and that WebSwan is not responsible if the buttons or banners malfunction because of third-party platforms, plugins, updates or settings. I agree to sign electronically.</span></label>
         <button type="submit" class="btn btn-primary" id="submitBtn">Sign and get my code</button>
         <p class="msg" id="msg" role="alert"></p>
       </form>
@@ -295,7 +309,7 @@ var SPLIT_BASE='https://taniad2169.github.io/access-link/';
       y=wrap(x,'Business: '+info.biz,50,y,1300,34);
       y=wrap(x,'Website: '+info.site,50,y,1300,34);
       y=wrap(x,'Signer: '+info.fullName+'   ·   Email: '+info.email+(info.phone?'   ·   Phone: '+info.phone:''),50,y,1300,34);
-      y=wrap(x,'Agreed: WebSwan provides the widget; the website owner and their platform are responsible for full compliance. Signed electronically.',50,y+6,1300,32);
+      y=wrap(x,'Agreed: WebSwan provides the widget; the website owner and their platform are responsible for full compliance; WebSwan is not responsible for malfunctions caused by third-party platforms, plugins, updates or settings. Signed electronically.',50,y+6,1300,32);
       x.strokeStyle='#8fb3d9'; x.lineWidth=2; x.beginPath(); x.moveTo(50,y+150); x.lineTo(900,y+150); x.stroke();
       x.fillStyle='#14365a'; x.font='88px '+info.font; x.fillText(info.name,60,y+130);
       x.fillStyle='#5a6f80'; x.font='22px Arial';
@@ -329,7 +343,7 @@ var SPLIT_BASE='https://taniad2169.github.io/access-link/';
       data.append('website_to_approve',site);
       data.append('signed_by',fullName);
       data.append('adopted_signature',signed.name+' (style: '+signed.style+')');
-      data.append('agreed_to_terms','Yes: WebSwan provides the widget; owner and platform responsible for full compliance; one-website license; pause if unpaid; signed electronically');
+      data.append('agreed_to_terms','Yes: WebSwan provides the widget; owner and platform responsible for full compliance; WebSwan not responsible for malfunctions caused by third-party platforms, plugins, updates or settings; one-website license; pause if unpaid; signed electronically');
       data.append('signed_at_local',signed.at.toLocaleString('en-US',{timeZone:'America/Los_Angeles',dateStyle:'full',timeStyle:'long'}));
       data.append('signed_at_utc',signed.at.toISOString());
       data.append('signer_timezone',(Intl.DateTimeFormat().resolvedOptions().timeZone||''));

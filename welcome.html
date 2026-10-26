@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Welcome · WebSwan Accessibility + Cookie Widgets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Great+Vibes&family=Dancing+Script:wght@600&family=Allura&family=Sacramento&family=Mrs+Saint+Delafield&family=Alex+Brush&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f2a3d;--muted:#5a6f80;--blue:#155eef;--cyan:#35c4d8;--navy:#0d2745;--line:#d5e6f3;--ok:#17864a;--err:#b42318;--sig:#14365a;--paper:#f5f8fc}
+*{box-sizing:border-box}
+html{background:#e9eff5}
+body{margin:0;font-family:'Manrope',Arial,sans-serif;color:var(--ink);line-height:1.6;padding:24px 12px 80px}
+a{color:#0b51bd}
+.skip{position:absolute;left:12px;top:-100px;background:#fff;padding:10px 14px;z-index:5}.skip:focus{top:12px}
+.page{max-width:860px;margin:auto;background:#fff;border-radius:22px;box-shadow:0 18px 50px rgba(13,39,69,.14);overflow:hidden}
+header{background:radial-gradient(circle at 85% 10%,rgba(53,196,216,.45),transparent 35%),linear-gradient(135deg,#0d2745,#154f81);color:#fff;padding:34px clamp(20px,5vw,48px) 30px}
+.brand{font-weight:800;font-size:15px;letter-spacing:.02em;opacity:.9}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.1;letter-spacing:-.03em;margin:14px 0 8px}
+header p{color:#d6ebfa;margin:0;font-size:17px}
+main{padding:clamp(20px,5vw,44px)}
+h2{font-size:23px;letter-spacing:-.01em;margin:34px 0 10px}
+h2:first-child{margin-top:0}
+.step{align-items:center;background:var(--blue);border-radius:50%;color:#fff;display:inline-flex;font-size:14px;height:28px;justify-content:center;margin-right:8px;vertical-align:2px;width:28px}
+.letter p{margin:0 0 12px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:12px 0}
+.disclaimer{max-height:none}
+.disclaimer h3{font-size:16px;margin:16px 0 4px}.disclaimer h3:first-child{margin-top:0}
+.disclaimer p,.disclaimer li{font-size:14px;color:#2c3e50}
+.disclaimer ol{padding-left:20px;margin:6px 0}
+.grid{display:grid;gap:12px 16px;grid-template-columns:1fr 1fr}
+.grid .full{grid-column:1/-1}
+label.f{display:block;font-size:13px;font-weight:800;color:var(--navy)}
+label.f input{border:1px solid #b9c5d6;border-radius:10px;font:inherit;font-size:15px;margin-top:4px;padding:10px 12px;width:100%}
+label.f small{color:var(--muted);font-weight:600}
+.sigbox{align-items:center;background:#fff;border:2px dashed #8fb3d9;border-radius:14px;color:var(--muted);cursor:pointer;display:flex;font:inherit;font-weight:700;justify-content:center;margin:14px 0 4px;min-height:96px;padding:10px;width:100%}
+.sigbox:hover{border-color:var(--blue)}
+.sigbox.signed{border-style:solid;border-color:var(--blue)}
+.sigbox .sig{color:var(--sig);font-size:44px;line-height:1.1}
+.sigmeta{color:var(--muted);font-size:13px;margin:0 0 12px}
+.agree{align-items:flex-start;display:flex;gap:10px;font-size:14px;margin:14px 0}
+.agree input{height:20px;margin-top:3px;width:20px;flex:0 0 auto}
+.btn{background:#fff;border:2px solid #7d8da6;border-radius:11px;color:var(--ink);cursor:pointer;font:inherit;font-size:15px;font-weight:800;min-height:46px;padding:10px 20px}
+.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn-primary:disabled{opacity:.5;cursor:default}
+.btn:focus-visible,.sigbox:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #ffbf47;outline-offset:3px}
+.msg{font-size:14px;font-weight:700;margin:10px 0 0}.msg.err{color:var(--err)}
+.locked{background:#f2f5fa;border:1px solid var(--line);border-radius:14px;color:var(--muted);padding:18px;text-align:center}
+.code{background:#061728;border-radius:12px;color:#c9f6ff;display:block;font-family:Consolas,Menlo,monospace;font-size:13px;margin-top:10px;padding:16px;white-space:pre-wrap;word-break:break-all}
+.copy{background:var(--cyan);border:0;border-radius:10px;color:#092337;cursor:pointer;font:inherit;font-weight:800;margin-top:10px;padding:12px 18px;width:100%}
+.ok{background:#e9f7ee;border:1px solid #9ad3ad;border-radius:12px;color:#17502b;font-weight:700;padding:12px 14px}
+details.p{border:1px solid var(--line);border-radius:12px;margin:8px 0;padding:0 14px}
+details.p summary{cursor:pointer;font-weight:800;padding:12px 0}
+details.p ol{margin:0 0 12px;padding-left:20px}details.p li{margin:4px 0;font-size:14px}
+.contact{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.contact div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px}.contact b{display:block}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:20px}
+/* signature modal */
+.ov{align-items:center;background:rgba(5,19,35,.7);display:none;inset:0;justify-content:center;padding:16px;position:fixed;z-index:50}.ov.show{display:flex}
+.modal{background:#fff;border-radius:18px;max-height:calc(100vh - 32px);max-width:620px;overflow:auto;width:100%}
+.mh{align-items:center;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;padding:14px 18px}.mh h3{margin:0}
+.x{background:#edf2f7;border:0;border-radius:8px;cursor:pointer;font-size:24px;height:36px;line-height:1;width:36px}
+.mb{padding:16px 18px}
+.opts{display:grid;gap:10px;grid-template-columns:1fr 1fr;margin-top:12px}
+.opt{background:#fff;border:2px solid #d3dae6;border-radius:12px;cursor:pointer;padding:10px;text-align:left}
+.opt[aria-checked="true"]{border-color:var(--blue);background:#eef4ff}
+.opt .s{color:var(--sig);display:block;font-size:32px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.opt .t{color:var(--muted);font-size:12px;font-weight:700}
+.legal{color:var(--muted);font-size:12px;margin:12px 0 0}
+.mf{border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;padding:12px 18px}
+@media(max-width:640px){.grid,.opts{grid-template-columns:1fr}.sigbox .sig{font-size:36px}}
+@media print{.no-print{display:none!important}html,body{background:#fff}.page{box-shadow:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<div class="page">
+  <header>
+    <div class="brand">🦢 The WebSwan · WebSwan Digital Solutions</div>
+    <h1 id="hello">Welcome to your Accessibility and Cookie Widgets</h1>
+    <p id="sub">Accessibility (ADA) buttons and cookie and privacy buttons for your website.</p>
+  </header>
+  <main id="main">
+
+    <section class="letter" aria-labelledby="letter-h">
+      <h2 id="letter-h">A note from The WebSwan</h2>
+      <p id="dear">Dear valued client,</p>
+      <p>Thank you for choosing WebSwan Digital Solutions. Your subscription includes our <b>WebSwan accessibility and cookie widgets</b>: a ♿ accessibility toolbar that lets visitors adjust text size, contrast, spacing, motion and more, and a 🍪 privacy center where visitors can accept or reject cookies and choose <b>Do Not Sell or Share My Personal Information</b>.</p>
+      <p>Getting started takes three steps: read and sign the disclaimer below, copy your personal code, and paste it into your website platform using the instructions for your provider. Once the widget appears on your site, our team confirms your website and activates your license.</p>
+      <p>If you have any questions, we are here for you.</p>
+      <p>Warmly,<br><b>Tania Domingue</b><br>Founder, The WebSwan</p>
+    </section>
+
+    <section aria-labelledby="disc-h">
+      <h2 id="disc-h"><span class="step" aria-hidden="true">1</span>Read and sign the disclaimer</h2>
+      <div class="card disclaimer" id="disclaimer">
+        <h3>WebSwan Accessibility Toolbar and Cookie Banner — Service Disclaimer and License Agreement</h3>
+        <ol>
+          <li><b>What WebSwan provides.</b> WebSwan Digital Solutions ("WebSwan") provides the WebSwan Accessibility Toolbar and Cookie Banner: accessibility (ADA) preference buttons and cookie and privacy consent buttons, delivered as embed code, and keeps the widget available while your subscription is active.</li>
+          <li><b>Your responsibility for full compliance.</b> You, the website owner, together with your website platform or provider (for example Wix, GoDaddy, Square, WordPress, Squarespace, Shopify or any other builder), are solely responsible for the full compliance of your website with the Americans with Disabilities Act (ADA), WCAG, Section 508, and all federal, state and local privacy and consumer-protection laws, including the CCPA/CPRA and other state privacy laws. This includes your website's content, images, videos, documents, forms, checkout, privacy policy, accessibility statement, and your platform's own built-in trackers and cookie settings.</li>
+          <li><b>No guarantee.</b> The widget is a tool that supports your accessibility and privacy efforts. It does not scan, repair, certify, or guarantee that your website complies with any law, and WebSwan does not provide legal advice. You should consult your own attorney about your obligations.</li>
+          <li><b>Installation.</b> You or your platform install the code. WebSwan is not responsible for platform limits, plan restrictions, code removed by your platform, or conflicts with other scripts.</li>
+          <li><b>License for one website.</b> Your license covers only the website address you list below. You may not copy, share, resell, or install the code on any other website. The widget reports the website address where it is installed so WebSwan can confirm authorized use.</li>
+          <li><b>Subscription and deactivation.</b> If your subscription payment is not received, WebSwan may pause the widget on your website until payment is made, and will reactivate it once your account is current. Unauthorized installations may be blocked.</li>
+          <li><b>Limitation of liability.</b> To the fullest extent allowed by law, WebSwan is not liable for any claim, demand letter, lawsuit, fine, penalty, or loss related to the accessibility or privacy compliance of your website, and you agree to hold WebSwan harmless from such claims.</li>
+          <li><b>Full compliance services.</b> If you would like WebSwan to build or remediate your website for compliance, that is available as a separate service under a separate agreement.</li>
+          <li><b>Electronic signature.</b> You agree to sign electronically, and your adopted signature has the same effect as your handwritten signature.</li>
+        </ol>
+      </div>
+
+      <form id="signForm" class="no-print" novalidate>
+        <div class="grid">
+          <label class="f">Full name<input id="fName" autocomplete="name" required></label>
+          <label class="f">Business name<input id="fBiz" autocomplete="organization" required></label>
+          <label class="f full">Website address where the widget will be installed<input id="fSite" type="url" inputmode="url" placeholder="https://yourbusiness.com" required></label>
+          <label class="f">Email<input id="fEmail" type="email" autocomplete="email" required></label>
+          <label class="f">Phone <small>(optional)</small><input id="fPhone" type="tel" autocomplete="tel"></label>
+        </div>
+        <button type="button" class="sigbox" id="sigBox" aria-label="Click to adopt your signature">✍️ Click here to choose your signature</button>
+        <p class="sigmeta">Date: <b id="sigDate">—</b></p>
+        <label class="agree"><input type="checkbox" id="agree"> <span>I have read the Service Disclaimer and License Agreement above. I understand that WebSwan provides the widget and that I and my website platform are responsible for the full compliance of my website. I agree to sign electronically.</span></label>
+        <button type="submit" class="btn btn-primary" id="submitBtn">Sign and get my code</button>
+        <p class="msg" id="msg" role="alert"></p>
+      </form>
+      <div id="signedNote" class="ok" hidden>✅ Signed and received. Thank you! Your code is now unlocked below.</div>
+    </section>
+
+    <section aria-labelledby="code-h">
+      <h2 id="code-h"><span class="step" aria-hidden="true">2</span>Copy your code</h2>
+      <div id="codeLocked" class="locked">🔒 Your code unlocks as soon as you sign the disclaimer above.</div>
+      <div id="codeOpen" hidden>
+        <p>Copy your code and paste it into your website platform (step 3). Paste it once, site-wide.</p>
+        <code class="code" id="embed"></code>
+        <button class="copy" id="copyBtn" type="button">📋 Copy my code</button>
+        <p style="font-size:14px;margin-top:14px">Optional: add these links to your website footer so visitors can always reach their choices:</p>
+        <code class="code" id="footerLinks">&lt;a href="#cookie-settings"&gt;Your Privacy Choices&lt;/a&gt;
+&lt;a href="#do-not-sell"&gt;Do Not Sell or Share My Personal Information&lt;/a&gt;</code>
+        <button class="copy" id="copyFooter" type="button">📋 Copy footer links</button>
+      </div>
+    </section>
+
+    <section aria-labelledby="install-h">
+      <h2 id="install-h"><span class="step" aria-hidden="true">3</span>Paste it into your platform</h2>
+      <p>Choose your provider. Always use the <b>site-wide</b> custom code area (Head), not a single-page embed box. Some platforms only allow custom code on paid plans with a connected domain.</p>
+      <details class="p"><summary>Wix</summary><ol><li>Open your Wix dashboard → <b>Settings</b>.</li><li>Scroll to <b>Advanced</b> → <b>Custom Code</b> → <b>+ Add Custom Code</b>.</li><li>Paste your code, name it "WebSwan Accessibility + Cookies".</li><li>Add code to pages: <b>All pages</b>, Load code once. Place code in: <b>Head</b>.</li><li>Click <b>Apply</b> and publish your site.</li><li>In Wix, also turn on <b>Settings → Cookie banner / Privacy & Cookies</b> settings so Wix's own trackers follow consent.</li></ol></details>
+      <details class="p"><summary>WordPress</summary><ol><li>Install the free plugin <b>WPCode</b> (Plugins → Add New → search "WPCode").</li><li>Go to <b>Code Snippets → Header &amp; Footer</b>.</li><li>Paste your code in the <b>Header</b> box and click <b>Save Changes</b>.</li><li>WordPress.com sites need a Business plan or higher to add custom code.</li></ol></details>
+      <details class="p"><summary>GoDaddy</summary><ol><li><b>Websites + Marketing:</b> Edit website → <b>Settings</b> → <b>Site-wide code</b>, paste your code in the Head section, then <b>Publish</b>.</li><li><b>Other GoDaddy builders:</b> add an <b>HTML</b> section to each page and paste the code there.</li><li>Also turn on GoDaddy's own <b>Cookie banner</b> setting so their built-in trackers follow consent.</li></ol></details>
+      <details class="p"><summary>Square Online</summary><ol><li>Open Square Online → <b>Website</b> → <b>Settings</b> → <b>Tracking tools</b> (or <b>Site-wide custom code</b> on newer plans).</li><li>Paste your code in the <b>Header</b> area and save.</li><li>If not available on your plan, add an <b>Embed code</b> section to your pages and paste it there.</li><li>Publish your site.</li></ol></details>
+      <details class="p"><summary>Squarespace</summary><ol><li><b>Settings</b> → <b>Advanced</b> → <b>Code Injection</b>.</li><li>Paste your code in <b>Header</b> and click <b>Save</b>.</li><li>Code injection requires a Business plan or higher.</li></ol></details>
+      <details class="p"><summary>Shopify</summary><ol><li><b>Online Store</b> → <b>Themes</b> → <b>⋯</b> → <b>Edit code</b>.</li><li>Open <b>theme.liquid</b> and paste the code right before <code>&lt;/head&gt;</code>.</li><li>Click <b>Save</b>. Also set up Shopify's <b>Customer privacy</b> settings.</li></ol></details>
+      <details class="p"><summary>Webflow, Framer, Duda, Weebly</summary><ol><li>Open <b>Site settings</b> → <b>Custom code</b>.</li><li>Paste your code in <b>Head code</b> (or Header) and save.</li><li>Publish the site.</li></ol></details>
+      <details class="p"><summary>AI website builders (Lovable, Bolt, v0, Base44, Replit, Hostinger AI and others)</summary><ol><li>Tell the builder: "Add this script tag to the &lt;head&gt; of every page of my website, exactly as written."</li><li>Paste your code.</li><li>Publish, then open your live site to confirm the ♿ and 🍪 buttons appear at the bottom.</li></ol></details>
+      <details class="p"><summary>Custom HTML website</summary><ol><li>Open each page (or your shared header template).</li><li>Paste the code just before <code>&lt;/head&gt;</code>.</li><li>Upload the files to your host.</li></ol></details>
+      <p><b>How to check it worked:</b> open your live website in a private window. You should see the cookie banner, the blue ♿ button at the bottom right and the small 🍪 button at the bottom left.</p>
+    </section>
+
+    <section aria-labelledby="help-h">
+      <h2 id="help-h">Need help?</h2>
+      <div class="contact">
+        <div><b>Call or text</b><a href="tel:+14158770687">(415) 877-0687</a></div>
+        <div><b>Rachel, our AI receptionist</b><a href="tel:+12396670151">(239) 667-0151</a><br><small>Compliance questions · calls only</small></div>
+        <div><b>Email</b><a href="mailto:designs@thewebswan.com">designs@thewebswan.com</a></div>
+        <div><b>Hours</b>Mon–Fri 10 AM–8 PM<br><small>Oakland, CA 94609 · by appointment</small></div>
+      </div>
+    </section>
+  </main>
+  <footer>© The WebSwan · WebSwan Digital Solutions · <a href="https://webswandigitalsolutions.com">webswandigitalsolutions.com</a></footer>
+</div>
+
+<div class="ov no-print" id="ov">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <div class="mh"><h3 id="mTitle">Adopt your signature</h3><button type="button" class="x" id="mClose" aria-label="Close">×</button></div>
+    <div class="mb">
+      <label class="f" for="mName">Your name as it should appear</label>
+      <input class="f" id="mName" type="text" maxlength="40" style="border:1px solid #b9c5d6;border-radius:10px;font:inherit;font-size:15px;margin-top:4px;padding:10px 12px;width:100%">
+      <div class="opts" id="opts" role="radiogroup" aria-label="Signature styles"></div>
+      <p class="legal">Choose a style and tap "Adopt &amp; sign." This signature will be placed on the agreement.</p>
+    </div>
+    <div class="mf"><button type="button" class="btn" id="mCancel">Cancel</button><button type="button" class="btn btn-primary" id="mAdopt" disabled>Adopt &amp; sign</button></div>
+  </div>
+</div>
+
+<script>
+/* ===== Settings for this repo ===== */
+var PRODUCT_NAME='WebSwan Accessibility Toolbar + Cookie Banner';
+var SCRIPT_SRC='https://taniad2169.github.io/webswan-compliance/compliance.js';
+var FORM_ENDPOINT='https://formsubmit.co/ajax/thewebswann@gmail.com';
+var MODE='split'; /* 'combo' = compliance.js; 'split' = access-link widget.js + cookie.js */
+var SPLIT_BASE='https://taniad2169.github.io/access-link/';
+
+(function(){
+  var $=function(id){return document.getElementById(id);};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function attr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+  /* Client details come from the link made in the private code builder: welcome.html#d=... */
+  var D={};
+  var m=/[#&]d=([^&]+)/.exec(location.hash||'');
+  if(m){ try{ var b=m[1].replace(/-/g,'+').replace(/_/g,'/'); while(b.length%4) b+='='; D=JSON.parse(decodeURIComponent(escape(atob(b))))||{}; }catch(e){ D={}; } }
+  if(D.company){ $('fBiz').value=D.company; $('hello').textContent='Welcome, '+D.company+'!'; }
+  if(D.client){ $('fName').value=D.client; $('dear').textContent='Dear '+D.client+','; }
+  if(D.site) $('fSite').value=D.site;
+  if(D.contactEmail) $('fEmail').value=D.contactEmail;
+  if(D.contactPhone) $('fPhone').value=D.contactPhone;
+
+  function buildCode(){
+    var biz=$('fBiz').value.trim()||D.company||'Business Name';
+    var a=[['data-company',biz]];
+    if(D.privacyUrl) a.push(['data-privacy-url',D.privacyUrl]);
+    if(D.statementUrl) a.push(['data-statement-url',D.statementUrl]);
+    var em=D.contactEmail||$('fEmail').value.trim(); if(em) a.push(['data-contact-email',em]);
+    var ph=D.contactPhone||$('fPhone').value.trim(); if(ph) a.push(['data-contact-phone',ph]);
+    if(D.color&&String(D.color).toLowerCase()!=='#155eef') a.push(['data-color',D.color]);
+    if(D.position==='left') a.push(['data-position','left']);
+    if(D.lang) a.push(['data-lang',D.lang]);
+    if(D.parts==='ada') a.push(['data-cookies','false']);
+    if(D.parts==='cookies') a.push(['data-ada','false']);
+    if(D.sensitive) a.push(['data-sensitive','true']);
+    if(D.branding===false) a.push(['data-branding','false']);
+    var line=function(src,arr){ return '<script src="'+src+'"'+(arr.length?'\n  '+arr.map(function(p){return p[0]+'="'+attr(p[1])+'"';}).join('\n  '):'')+'><\/script>'; };
+    if(MODE==='split'){
+      var adaA=[], ckA=[['data-company',biz]];
+      if(D.statementUrl) adaA.push(['data-statement-url',D.statementUrl]);
+      if(em){ adaA.push(['data-contact-email',em]); }
+      if(D.color&&String(D.color).toLowerCase()!=='#155eef') adaA.push(['data-color',D.color]);
+      if(D.privacyUrl) ckA.push(['data-privacy-url',D.privacyUrl]);
+      if(em) ckA.push(['data-contact-email',em]);
+      var out=[];
+      if(D.parts!=='cookies') out.push(line(SPLIT_BASE+'widget.js',adaA));
+      if(D.parts!=='ada') out.push(line(SPLIT_BASE+'cookie.js',ckA));
+      return out.join('\n');
+    }
+    return line(SCRIPT_SRC,a);
+  }
+
+  var KEY='webswan-welcome-signed:'+SCRIPT_SRC+':'+(D.company||'');
+  function unlock(){
+    $('embed').textContent=buildCode();
+    $('codeLocked').hidden=true; $('codeOpen').hidden=false;
+    $('signForm').style.display='none'; $('signedNote').hidden=false;
+  }
+  try{ var saved=JSON.parse(localStorage.getItem(KEY)||'null'); if(saved&&saved.biz){ $('fBiz').value=saved.biz; if(saved.email) $('fEmail').value=saved.email; if(saved.phone) $('fPhone').value=saved.phone; unlock(); } }catch(e){}
+
+  function copy(text,btn,label){
+    var done=function(){ btn.textContent='✅ Copied!'; setTimeout(function(){btn.textContent=label;},1800); };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done,fallback); } else fallback();
+    function fallback(){ var t=document.createElement('textarea'); t.value=text; t.style.position='fixed'; t.style.opacity='0'; document.body.appendChild(t); t.select(); try{document.execCommand('copy');}catch(e){} t.remove(); done(); }
+  }
+  $('copyBtn').addEventListener('click',function(){ copy($('embed').textContent,this,'📋 Copy my code'); });
+  $('copyFooter').addEventListener('click',function(){ copy($('footerLinks').textContent,this,'📋 Copy footer links'); });
+
+  /* ===== Signature (same style picker as the WebSwan Scope of Work) ===== */
+  var STYLES=[["Great Vibes","'Great Vibes',cursive"],["Dancing Script","'Dancing Script',cursive"],["Allura","'Allura',cursive"],["Sacramento","'Sacramento',cursive"],["Mrs Saint Delafield","'Mrs Saint Delafield',cursive"],["Alex Brush","'Alex Brush',cursive"]];
+  var ov=$('ov'),opts=$('opts'),mName=$('mName'),adopt=$('mAdopt'),box=$('sigBox');
+  var chosen=null, signed=null, sending=false;
+  function renderOpts(){
+    var name=mName.value.trim()||'Your Name';
+    opts.innerHTML=STYLES.map(function(s,i){return '<button type="button" class="opt" role="radio" aria-checked="'+(chosen===i)+'" data-i="'+i+'"><span class="s" style="font-family:'+s[1].replace(/"/g,'&quot;')+'">'+esc(name)+'</span><span class="t">Style '+(i+1)+'</span></button>';}).join('');
+    Array.prototype.forEach.call(opts.querySelectorAll('.opt'),function(b){b.addEventListener('click',function(){chosen=+b.getAttribute('data-i');adopt.disabled=false;renderOpts();opts.querySelector('[data-i="'+chosen+'"]').focus();});});
+  }
+  function openM(){ mName.value=mName.value||$('fName').value.trim(); renderOpts(); ov.classList.add('show'); setTimeout(function(){ mName.focus(); },50); }
+  function closeM(){ ov.classList.remove('show'); box.focus(); }
+  box.addEventListener('click',openM);
+  $('mClose').addEventListener('click',closeM); $('mCancel').addEventListener('click',closeM);
+  ov.addEventListener('click',function(e){ if(e.target===ov) closeM(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&ov.classList.contains('show')) closeM(); });
+  mName.addEventListener('input',renderOpts);
+  adopt.addEventListener('click',function(){
+    if(chosen===null) return;
+    var name=mName.value.trim()||$('fName').value.trim(), st=STYLES[chosen], now=new Date();
+    if(!name){ mName.focus(); return; }
+    signed={name:name,style:st[0],font:st[1],at:now};
+    box.classList.add('signed');
+    box.innerHTML='<span class="sig" style="font-family:'+st[1].replace(/"/g,'&quot;')+'">'+esc(name)+'</span>';
+    box.setAttribute('aria-label','Signed as '+name+'. Click to change signature.');
+    $('sigDate').textContent=now.toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    if(!$('fName').value.trim()) $('fName').value=name;
+    ov.classList.remove('show'); $('msg').textContent=''; $('agree').focus();
+  });
+
+  /* Signature file: a PNG of the signed acknowledgment, attached to the email to WebSwan */
+  function wrap(ctx,text,x,y,maxW,lh){ var words=text.split(' '),line=''; for(var i=0;i<words.length;i++){ var t=line+words[i]+' '; if(ctx.measureText(t).width>maxW&&line){ ctx.fillText(line,x,y); line=words[i]+' '; y+=lh; } else line=t; } ctx.fillText(line,x,y); return y+lh; }
+  function makeSignatureFile(info){
+    var fontReady=(document.fonts&&document.fonts.load)?document.fonts.load('72px '+info.font).catch(function(){}):Promise.resolve();
+    return fontReady.then(function(){
+      var c=document.createElement('canvas'); c.width=1400; c.height=760; var x=c.getContext('2d');
+      x.fillStyle='#ffffff'; x.fillRect(0,0,c.width,c.height);
+      x.fillStyle='#0d2745'; x.fillRect(0,0,c.width,110);
+      x.fillStyle='#ffffff'; x.font='bold 34px Arial'; x.fillText('The WebSwan · Signed Service Disclaimer and License Agreement',50,68);
+      x.fillStyle='#0f2a3d'; x.font='bold 28px Arial'; x.fillText(PRODUCT_NAME,50,170);
+      x.font='24px Arial'; x.fillStyle='#2c3e50';
+      var y=215;
+      y=wrap(x,'Business: '+info.biz,50,y,1300,34);
+      y=wrap(x,'Website: '+info.site,50,y,1300,34);
+      y=wrap(x,'Signer: '+info.fullName+'   ·   Email: '+info.email+(info.phone?'   ·   Phone: '+info.phone:''),50,y,1300,34);
+      y=wrap(x,'Agreed: WebSwan provides the widget; the website owner and their platform are responsible for full compliance. Signed electronically.',50,y+6,1300,32);
+      x.strokeStyle='#8fb3d9'; x.lineWidth=2; x.beginPath(); x.moveTo(50,y+150); x.lineTo(900,y+150); x.stroke();
+      x.fillStyle='#14365a'; x.font='88px '+info.font; x.fillText(info.name,60,y+130);
+      x.fillStyle='#5a6f80'; x.font='22px Arial';
+      x.fillText('Adopted signature ('+info.style+')',50,y+185);
+      x.fillText('Signed: '+info.at.toLocaleString('en-US',{dateStyle:'long',timeStyle:'short'})+' · '+(Intl.DateTimeFormat().resolvedOptions().timeZone||''),50,y+218);
+      return new Promise(function(res){ if(c.toBlob) c.toBlob(function(bl){res(bl);},'image/png'); else res(null); });
+    });
+  }
+
+  $('signForm').addEventListener('submit',function(e){
+    e.preventDefault(); if(sending) return;
+    var msg=$('msg'); msg.className='msg'; msg.textContent='';
+    var fail=function(t,el){ msg.className='msg err'; msg.textContent=t; if(el) el.focus(); };
+    var fullName=$('fName').value.trim(), biz=$('fBiz').value.trim(), site=$('fSite').value.trim(), email=$('fEmail').value.trim(), phone=$('fPhone').value.trim();
+    if(!fullName) return fail('Please enter your full name.',$('fName'));
+    if(!biz) return fail('Please enter your business name.',$('fBiz'));
+    if(!/^(https?:\/\/)?[^\s.]+\.[^\s]{2,}$/i.test(site)) return fail('Please enter the website address where you will install the widget.',$('fSite'));
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return fail('Please enter a valid email.',$('fEmail'));
+    if(!signed) return fail('Please click the signature box and choose your signature.',box);
+    if(!$('agree').checked) return fail('Please check the box to agree before continuing.',$('agree'));
+    if(!/^https?:\/\//i.test(site)) site='https://'+site;
+    sending=true; var btn=$('submitBtn'); btn.disabled=true; btn.textContent='Sending…';
+    var info={biz:biz,site:site,fullName:fullName,email:email,phone:phone,name:signed.name,style:signed.style,font:signed.font,at:signed.at};
+    makeSignatureFile(info).catch(function(){return null;}).then(function(blob){
+      var data=new FormData();
+      data.append('_subject','✍️ SIGNED: '+PRODUCT_NAME+' · '+biz);
+      data.append('_template','table');
+      data.append('_captcha','false');
+      data.append('document','Service Disclaimer and License Agreement · '+PRODUCT_NAME);
+      data.append('business',biz);
+      data.append('website_to_approve',site);
+      data.append('signed_by',fullName);
+      data.append('adopted_signature',signed.name+' (style: '+signed.style+')');
+      data.append('agreed_to_terms','Yes: WebSwan provides the widget; owner and platform responsible for full compliance; one-website license; pause if unpaid; signed electronically');
+      data.append('signed_at_local',signed.at.toLocaleString('en-US',{timeZone:'America/Los_Angeles',dateStyle:'full',timeStyle:'long'}));
+      data.append('signed_at_utc',signed.at.toISOString());
+      data.append('signer_timezone',(Intl.DateTimeFormat().resolvedOptions().timeZone||''));
+      data.append('email',email); data.append('_replyto',email);
+      if(phone) data.append('phone',phone);
+      data.append('embed_code_given',buildCode());
+      data.append('signing_page',location.href.split('#')[0]);
+      data.append('device',navigator.userAgent);
+      if(blob) data.append('attachment',blob,'signature-'+biz.replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'.png');
+      return fetch(FORM_ENDPOINT,{method:'POST',body:data,headers:{'Accept':'application/json'}});
+    }).then(function(r){
+      if(!r||!r.ok) throw new Error('bad');
+      try{ localStorage.setItem(KEY,JSON.stringify({biz:biz,email:email,phone:phone,at:Date.now()})); }catch(e){}
+      unlock(); $('code-h').scrollIntoView({behavior:'smooth',block:'start'}); $('copyBtn').focus({preventScroll:true});
+    }).catch(function(){
+      sending=false; btn.disabled=false; btn.textContent='Sign and get my code';
+      fail('Something went wrong sending your signature. Please try again, or call (415) 877-0687.');
+    });
+  });
+})();
+</script>
+</body>
+</html>

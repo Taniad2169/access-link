@@ -140,6 +140,20 @@ Safe description:
 
 ---
 
+# Client welcome page and signed disclaimer
+
+`https://taniad2169.github.io/access-link/welcome.html`
+
+In the private box on the demo page (🔑 ×7, then 🔒 ×3), fill in the client's business, website and links, then press **Copy client welcome link** and send it to the client. The client sees:
+
+1. A welcome letter from The WebSwan.
+2. The **Service Disclaimer and License Agreement**: WebSwan provides the widget; the website owner, together with their platform (Wix, GoDaddy, Square, WordPress and others), is responsible for the full compliance of their website. One-website license, pause if unpaid, no guarantee, electronic signature.
+3. They enter their name, business, website and email, **choose a signature from six styles**, and check the agreement box.
+4. On signing, **thewebswann@gmail.com receives an email** (via FormSubmit) with all the details, the website to approve, the code they were given, and the **signature file (PNG) attached**.
+5. Only then is their personal code unlocked, with copy buttons and install steps for Wix, WordPress, GoDaddy, Square, Squarespace, Shopify, Webflow, AI builders and plain HTML.
+
+---
+
 # License check and install alerts (both widgets)
 
 Every time a browser loads `widget.js` or `cookie.js` on a real website (not localhost), it:

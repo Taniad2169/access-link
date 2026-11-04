@@ -1,5 +1,5 @@
 /*
- * Tania Accessibility Toolbar v1.0.0
+ * Tania Accessibility Toolbar v2.0.0
  * A privacy-friendly visitor preference toolbar.
  * Important: this toolbar does not certify or guarantee ADA/WCAG compliance.
  */
@@ -16,7 +16,9 @@
     statementUrl: (script && script.dataset.statementUrl) || "",
     contactEmail: (script && script.dataset.contactEmail) || "",
     brand: (script && script.dataset.brand) || "Accessibility tools",
-    storageKey: (script && script.dataset.storageKey) || "tania-a11y-preferences-v1"
+    storageKey: (script && script.dataset.storageKey) || "tania-a11y-preferences-v1",
+    autoFix: !(script && script.dataset.autoFix === "false"),
+    lang: (script && script.dataset.lang) || "en"
   };
 
   if (!window.CSS || !CSS.supports("color", options.color)) options.color = "#155eef";
@@ -34,9 +36,12 @@
     pauseMotion: false,
     largeCursor: false,
     focusOutline: false,
-    hideMedia: false
+    hideMedia: false,
+    readingGuide: false,
+    muteMedia: false
   };
   var state = loadState();
+  try { if (!localStorage.getItem(options.storageKey) && window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) state.pauseMotion = true; } catch (e) { /* ignore */ }
   var lastFocused = null;
 
   function loadState() {
@@ -94,6 +99,12 @@
       "html[data-ta11y-media='true'] body :where(img,picture,video,canvas,iframe,svg):not(#" + HOST_ID + "){visibility:hidden!important}",
       "html[data-ta11y-readable='true'] #" + HOST_ID + ",html[data-ta11y-line-height='true'] #" + HOST_ID + ",html[data-ta11y-letter-spacing='true'] #" + HOST_ID + "{font:initial!important;letter-spacing:normal!important;line-height:normal!important}",
       "@media (prefers-reduced-motion:reduce){#" + HOST_ID + "{scroll-behavior:auto!important}}",
+      ".ta11y-skip{position:fixed!important;left:12px!important;top:-80px!important;z-index:2147483647!important;background:#0b2f57!important;color:#fff!important;padding:12px 18px!important;border-radius:8px!important;font:700 16px/1.2 Arial,Helvetica,sans-serif!important;text-decoration:underline!important}",
+      ".ta11y-skip:focus{top:12px!important;outline:3px solid #ffbf47!important;outline-offset:2px!important}",
+      ".ta11y-sr{position:absolute!important;width:1px!important;height:1px!important;margin:-1px!important;padding:0!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}",
+      "html[data-ta11y-autofix='true'] body :focus-visible:not(#" + HOST_ID + "){outline:3px solid #ffbf47!important;outline-offset:2px!important}",
+      "#ta11y-guide{position:fixed;left:0;right:0;height:14px;margin-top:-7px;background:rgba(255,235,59,.35);border-top:2px solid #111;border-bottom:2px solid #111;pointer-events:none;z-index:2147483646;display:none}",
+      "html[data-ta11y-guide='true'] #ta11y-guide{display:block}",
       "html[data-wsc-banner='open'] #" + HOST_ID + "{bottom:calc(var(--wsc-banner-h,0px) + 28px)!important}",
       "html[data-wsc-modal='open'] #" + HOST_ID + "{visibility:hidden!important}"
     ].join("\n");
@@ -148,7 +159,11 @@
       });
     });
 
+    root.getElementById("tts-read").addEventListener("click", readAloud);
+    root.getElementById("tts-stop").addEventListener("click", function () { try { speechSynthesis.cancel(); } catch (e) { /* ignore */ } announce("Reading stopped"); });
+    if (!("speechSynthesis" in window)) root.querySelector(".tts").hidden = true;
     document.addEventListener("keydown", function (event) {
+      if (event.altKey && (event.key === "a" || event.key === "A" || event.code === "KeyA")) { event.preventDefault(); panel.hidden ? openPanel() : closePanel(); return; }
       if (event.key === "Escape" && !panel.hidden) closePanel();
       if (event.key === "Tab" && !panel.hidden) keepFocusInside(event);
     });
@@ -171,7 +186,7 @@
     }
 
     function keepFocusInside(event) {
-      var focusable = Array.prototype.slice.call(panel.querySelectorAll("button,a[href]"))
+      var focusable = Array.prototype.slice.call(panel.querySelectorAll("button,a[href],summary"))
         .filter(function (element) { return !element.disabled && element.offsetParent !== null; });
       if (!focusable.length) return;
       var first = focusable[0];
@@ -214,7 +229,11 @@
             settingButton("largeCursor", "\u27a4", "Large cursor") +
             settingButton("focusOutline", "\u25a3", "Focus highlight") +
             settingButton("hideMedia", "\u25a7", "Hide media") +
+            settingButton("readingGuide", "\u2550", "Reading guide") +
+            settingButton("muteMedia", "\u266b", "Stop sounds & video") +
           '</div>' +
+          '<div class="tts"><button id="tts-read" type="button"><span aria-hidden="true">\ud83d\udd0a</span> Read page aloud</button><button id="tts-stop" type="button">Stop reading</button></div>' +
+          '<details class="kbd"><summary>Keyboard help</summary><ul><li><kbd>Tab</kbd> / <kbd>Shift</kbd>+<kbd>Tab</kbd>: move between links and buttons</li><li><kbd>Enter</kbd> or <kbd>Space</kbd>: activate</li><li><kbd>Alt</kbd>+<kbd>A</kbd>: open or close these tools</li><li><kbd>Esc</kbd>: close these tools</li><li>The first <kbd>Tab</kbd> on every page offers \u201cSkip to main content\u201d.</li></ul></details>' +
           '<button id="reset" class="reset" type="button">Reset all settings</button>' +
           (supportLinks ? '<div class="support">' + supportLinks + '</div>' : '') +
           '<p class="privacy">Your preferences stay in this browser. This toolbar does not track you.</p>' +
@@ -259,6 +278,8 @@
       ".setting-icon{align-items:center;background:#eef1f6;border-radius:7px;display:flex;font-size:17px;height:28px;justify-content:center;width:28px}",
       ".setting[aria-pressed='true'] .setting-icon{background:var(--ta11y-accent,var(--accent));color:#fff}",
       ".check{opacity:0}.setting[aria-pressed='true'] .check{opacity:1}",
+      ".tts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.tts button{background:#fff;border:1px solid #cfd7e6;border-radius:10px;color:#29334a;cursor:pointer;font-size:12px;font-weight:750;min-height:44px;padding:8px}",
+      ".kbd{margin-top:10px;font-size:12px;color:#29334a;border:1px solid #dfe4ec;border-radius:10px;padding:8px 10px}.kbd summary{cursor:pointer;font-weight:750}.kbd ul{margin:6px 0 0 16px;padding:0}.kbd kbd{background:#eef1f6;border:1px solid #cfd7e6;border-radius:4px;padding:0 4px;font-family:inherit}",
       ".reset{background:transparent;border:0;color:#34425a;cursor:pointer;font-size:13px;font-weight:750;margin:15px 0 8px;padding:8px;text-decoration:underline;width:100%}",
       ".support{border-top:1px solid #e2e6ed;display:flex;flex-wrap:wrap;gap:6px 14px;padding-top:12px}",
       ".support-link{color:#164d9f;font-size:12px;font-weight:700;text-underline-offset:2px}",
@@ -282,6 +303,8 @@
     setFlag(html, "cursor", state.largeCursor);
     setFlag(html, "focus", state.focusOutline);
     setFlag(html, "media", state.hideMedia);
+    setFlag(html, "guide", state.readingGuide);
+    if (state.muteMedia || state.pauseMotion) pauseAllMedia();
 
     var host = document.getElementById(HOST_ID);
     if (!host) return;
@@ -396,6 +419,108 @@
   }
 
 
+  /* ---------- Read aloud, reading guide, media control ---------- */
+  function readAloud() {
+    if (!("speechSynthesis" in window)) return;
+    try { speechSynthesis.cancel(); } catch (e) { /* ignore */ }
+    var sel = String(window.getSelection ? window.getSelection() : "").trim();
+    var main = document.querySelector("main,[role='main'],article") || document.body;
+    var text = sel || (main.innerText || "").replace(/\s+/g, " ").trim();
+    if (!text) return;
+    var chunks = text.slice(0, 20000).match(/[^.!?]+[.!?]*/g) || [text];
+    chunks.forEach(function (c) { var u = new SpeechSynthesisUtterance(c.trim()); u.lang = document.documentElement.lang || "en"; speechSynthesis.speak(u); });
+    announce(sel ? "Reading your selection" : "Reading the page");
+  }
+  function pauseAllMedia() {
+    Array.prototype.forEach.call(document.querySelectorAll("video,audio"), function (m) { try { if (!m.paused) m.pause(); m.autoplay = false; } catch (e) { /* ignore */ } });
+    Array.prototype.forEach.call(document.querySelectorAll("marquee"), function (m) { try { m.stop(); } catch (e) { /* ignore */ } });
+  }
+  function setupGuide() {
+    if (document.getElementById("ta11y-guide")) return;
+    var g = document.createElement("div"); g.id = "ta11y-guide"; g.setAttribute("aria-hidden", "true");
+    document.body.appendChild(g);
+    document.addEventListener("mousemove", function (e) { if (state.readingGuide) g.style.top = e.clientY + "px"; }, { passive: true });
+  }
+
+  /* ---------- Automatic repairs (WCAG 2.1 / 2.2 AA helpers) ----------
+     Safe, reversible fixes for common problems an automated scan can find. They help visitors right away,
+     but they do not replace fixing the website itself; problems that need a person (image descriptions,
+     colour contrast, keyboard traps, form error messages, captions) are listed in the browser console for the site owner. */
+  var fixed = { lang: 0, zoom: 0, skip: 0, iframes: 0, fields: 0, icons: 0, clickables: 0, newTab: 0 };
+  function autoFix() {
+    if (!options.autoFix) return;
+    var html = document.documentElement;
+    html.setAttribute("data-ta11y-autofix", "true");
+    if (!(html.getAttribute("lang") || "").trim()) { html.setAttribute("lang", options.lang); fixed.lang = 1; }                     // 3.1.1
+    var vp = document.querySelector("meta[name='viewport']");                                                                       // 1.4.4 / 1.4.10
+    if (vp && /user-scalable\s*=\s*(no|0)|maximum-scale\s*=\s*(1(\.0)?|0?\.\d+)\b/i.test(vp.content || "")) {
+      vp.content = vp.content.replace(/,?\s*user-scalable\s*=\s*(no|0)/ig, "").replace(/,?\s*maximum-scale\s*=\s*[\d.]+/ig, "") + ", user-scalable=yes, maximum-scale=5"; fixed.zoom = 1;
+    }
+    if (!document.querySelector("a.ta11y-skip") && !document.querySelector("a[href^='#'][class*='skip' i],a[href='#main'],a[href='#content'],a[href='#main-content']")) {   // 2.4.1
+      var target = document.querySelector("main,[role='main'],#main,#main-content,#content") || document.querySelector("h1");
+      if (target) {
+        if (!target.id) target.id = "ta11y-main";
+        var skip = document.createElement("a"); skip.className = "ta11y-skip"; skip.href = "#" + target.id; skip.textContent = "Skip to main content";
+        skip.addEventListener("click", function (e) { e.preventDefault(); if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1"); target.focus(); target.scrollIntoView({ block: "start" }); });
+        document.body.insertBefore(skip, document.body.firstChild); fixed.skip = 1;
+      }
+    }
+    repairNodes(document);
+    try {
+      var t = null;
+      new MutationObserver(function () { clearTimeout(t); t = setTimeout(function () { repairNodes(document); if (state.muteMedia || state.pauseMotion) pauseAllMedia(); }, 400); })
+        .observe(document.body, { childList: true, subtree: true });
+    } catch (e) { /* ignore */ }
+    window.setTimeout(ownerReport, 1500);
+  }
+  function inWidget(el) { return el.closest && el.closest("#" + HOST_ID); }
+  function repairNodes(scope) {
+    Array.prototype.forEach.call(scope.querySelectorAll("iframe:not([title])"), function (f) {                                     // 4.1.2
+      var src = f.getAttribute("src") || ""; var h = ""; try { h = new URL(src, location.href).hostname.replace(/^www\./, ""); } catch (e) { /* ignore */ }
+      f.setAttribute("title", /youtube|vimeo/.test(h) ? "Video" : /google\.[a-z.]+\/maps|maps\.google/.test(src) ? "Map" : (h ? "Embedded content from " + h : "Embedded content")); fixed.iframes++;
+    });
+    Array.prototype.forEach.call(scope.querySelectorAll("input:not([type=hidden]):not([type=submit]):not([type=button]):not([type=reset]):not([aria-label]):not([aria-labelledby]),select:not([aria-label]):not([aria-labelledby]),textarea:not([aria-label]):not([aria-labelledby])"), function (el) {   // 1.3.1 / 3.3.2 / 4.1.2
+      if (inWidget(el)) return;
+      if (el.id && document.querySelector("label[for='" + (window.CSS && CSS.escape ? CSS.escape(el.id) : el.id) + "']")) return;
+      if (el.closest("label")) return;
+      var name = el.getAttribute("placeholder") || el.getAttribute("title") || el.getAttribute("name") && el.getAttribute("name").replace(/[_\-\[\]]+/g, " ").trim();
+      if (name) { el.setAttribute("aria-label", name); fixed.fields++; }
+    });
+    Array.prototype.forEach.call(scope.querySelectorAll("a[href],button,[role=button]"), function (el) {                            // 2.4.4 / 4.1.2
+      if (inWidget(el) || el.getAttribute("aria-label") || el.getAttribute("aria-labelledby")) return;
+      if ((el.textContent || "").trim()) return;
+      var img = el.querySelector("img[alt]"); if (img && img.getAttribute("alt").trim()) return;
+      var guess = el.getAttribute("title") || (el.querySelector("svg title") || {}).textContent || "";
+      if (!guess && el.tagName === "A") {
+        var href = el.getAttribute("href") || "";
+        var m = href.match(/facebook|instagram|linkedin|twitter|x\.com|youtube|tiktok|yelp|google|pinterest|whatsapp/i);
+        guess = /^tel:/.test(href) ? "Call us" : /^mailto:/.test(href) ? "Email us" : m ? (m[0].replace("x.com", "X") + " page") : "";
+        if (guess) guess = guess.charAt(0).toUpperCase() + guess.slice(1);
+      }
+      if (guess) { el.setAttribute("aria-label", guess); fixed.icons++; }
+    });
+    Array.prototype.forEach.call(scope.querySelectorAll("div[onclick],span[onclick],li[onclick],img[onclick],td[onclick]"), function (el) {   // 2.1.1
+      if (inWidget(el) || el.hasAttribute("tabindex") || el.getAttribute("data-ta11y-key")) return;
+      el.setAttribute("tabindex", "0"); if (!el.getAttribute("role")) el.setAttribute("role", "button"); el.setAttribute("data-ta11y-key", "1");
+      el.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); el.click(); } }); fixed.clickables++;
+    });
+    Array.prototype.forEach.call(scope.querySelectorAll("a[target='_blank']:not([data-ta11y-nt])"), function (a) {                 // 3.2.5 (advisory)
+      if (inWidget(a)) return; a.setAttribute("data-ta11y-nt", "1");
+      var s = document.createElement("span"); s.className = "ta11y-sr"; s.textContent = " (opens in a new tab)"; a.appendChild(s); fixed.newTab++;
+    });
+  }
+  function ownerReport() {
+    try {
+      var todo = [];
+      var noAlt = document.querySelectorAll("img:not([alt])").length; if (noAlt) todo.push(noAlt + " image(s) have no alt text (WCAG 1.1.1): add a short description to each.");
+      var pos = Array.prototype.filter.call(document.querySelectorAll("[tabindex]"), function (e) { return +e.getAttribute("tabindex") > 0; }).length; if (pos) todo.push(pos + " element(s) use a positive tabindex (WCAG 2.4.3): use 0 or remove it.");
+      var h1 = document.querySelectorAll("h1").length; if (h1 !== 1) todo.push("The page has " + h1 + " H1 headings (WCAG 1.3.1 / 2.4.6): use exactly one.");
+      var vids = Array.prototype.filter.call(document.querySelectorAll("video"), function (v) { return !v.querySelector("track[kind=captions],track[kind=subtitles]"); }).length; if (vids) todo.push(vids + " video(s) have no captions (WCAG 1.2.2).");
+      if (!document.querySelector("main,[role=main]")) todo.push("No <main> landmark (WCAG 1.3.1).");
+      if (window.console && console.info) console.info("%cWebSwan accessibility toolbar", "font-weight:bold;color:#1182f0", "\nAutomatic repairs applied:", fixed, todo.length ? "\nStill needs the website owner (the toolbar cannot fix these):\n- " + todo.join("\n- ") : "\nNo extra owner items found on this page.", "\nManual checks still required: keyboard-only use, screen reader test, colour contrast, form error messages, focus order.");
+    } catch (e) { /* ignore */ }
+  }
+
   // Small notice shown when WebSwan turns this widget off (unpaid = paused, unlicensed = blocked).
   function showLicenseNotice(product, status) {
     try { if (sessionStorage.getItem("ws-notice-closed-" + product)) return; } catch (e) { /* ignore */ }
@@ -459,12 +584,15 @@
 
   function boot() {
     start();
+    setupGuide();
+    autoFix();
     licenseCheck("ada", function (status) {
       showLicenseNotice("ada", status);
       var el = document.getElementById(HOST_ID);
       if (el) el.parentNode.removeChild(el);
       var st = document.getElementById(STYLE_ID);
       if (st) st.parentNode.removeChild(st);
+      document.documentElement.removeAttribute("data-ta11y-autofix");
     });
   }
 

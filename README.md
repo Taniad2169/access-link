@@ -10,6 +10,27 @@ A self-contained, privacy-friendly accessibility preference widget. It is ready 
 
 The public GitHub repository is named `access-link`. GitHub Pages serves `index.html` as the demo and `widget.js` as the one-line widget.
 
+## Version 2: automatic repairs and new tools
+
+On every page load the toolbar now repairs common problems automatically (turn off with `data-auto-fix="false"`):
+
+| Repair | WCAG |
+|---|---|
+| Sets the page language when missing (`data-lang`, default `en`) | 3.1.1 |
+| Unblocks pinch-zoom on phones | 1.4.4 |
+| Adds a "Skip to main content" link as the first Tab stop | 2.4.1 |
+| Visible keyboard focus outline on every link and button | 2.4.7 |
+| Names unlabeled form fields from their placeholder | 1.3.1, 3.3.2, 4.1.2 |
+| Names icon-only links (phone, email, social) | 2.4.4, 4.1.2 |
+| Makes click-only boxes reachable and usable with the keyboard | 2.1.1 |
+| Titles embedded maps and videos | 4.1.2 |
+| Tells screen readers when a link opens a new tab | 3.2.5 |
+| Pauses autoplay video and sound when the visitor prefers less motion | 1.4.2, 2.2.2 |
+
+New visitor tools: read page aloud, reading guide, stop sounds and video, keyboard help, and **Alt + A** to open the toolbar.
+
+**Important:** no toolbar can make a website fully compliant by itself. Image descriptions, colour contrast, captions, form error messages and keyboard traps must be fixed in the website. The toolbar lists what it could not fix in the browser console for the site owner, and the WebSwan audit covers the rest by hand.
+
 ## Optional customization
 
 ```html
